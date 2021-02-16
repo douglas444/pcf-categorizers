@@ -9,6 +9,7 @@ import br.ufu.facom.pcf.core.*;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.HashMap;
 
 public class MINASInterceptable implements Interceptable, Configurable {
@@ -90,13 +91,16 @@ public class MINASInterceptable implements Interceptable, Configurable {
 
         final MINASController minasController = minasBuilder.build();
 
-        final String[] files = this.nominalParameters.get(DATASET_FILE_PATH).split(";");
+        final String[] files = Arrays.stream(this.nominalParameters
+                .get(DATASET_FILE_PATH)
+                .split(";"))
+                .map(file -> file.replace(" ", ""))
+                .filter(file -> !file.isEmpty())
+                .toArray(String[]::new);
+
         final DSFileReader[] fileReaders = new DSFileReader[files.length];
 
         for (int i = 0; i < files.length; i++) {
-            if (files[i].replace(" ", "").equals("")) {
-                continue;
-            }
             fileReaders[i] = new DSFileReader(",", FileUtil.getFileReader(files[i]));
         }
 
