@@ -94,6 +94,9 @@ public class MINASInterceptable implements Interceptable, Configurable {
         final DSFileReader[] fileReaders = new DSFileReader[files.length];
 
         for (int i = 0; i < files.length; i++) {
+            if (files[i].replace(" ", "").equals("")) {
+                continue;
+            }
             fileReaders[i] = new DSFileReader(",", FileUtil.getFileReader(files[i]));
         }
 
