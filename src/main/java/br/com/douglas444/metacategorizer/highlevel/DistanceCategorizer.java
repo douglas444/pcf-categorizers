@@ -44,7 +44,7 @@ public class DistanceCategorizer implements HighLevelCategorizer, Configurable {
 
         final List<Sample> knownConceptsCentroids = knownClusterSummaries
                 .stream()
-                .map(clusterSummary -> new Sample(targetClusterSummary.calculateCentroidAttributes(), null))
+                .map(clusterSummary -> new Sample(clusterSummary.calculateCentroidAttributes(), clusterSummary.getLabel()))
                 .collect(Collectors.toList());
 
         double bayesianErrorEstimation;

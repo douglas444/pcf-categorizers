@@ -1,5 +1,6 @@
 package br.com.douglas444.metacategorizer.lowlevel;
 
+import br.com.douglas444.minas.MicroCluster;
 import br.com.douglas444.mltk.datastructure.Sample;
 import br.com.douglas444.util.BayesianErrorEstimation;
 import br.com.douglas444.util.Oracle;
@@ -35,24 +36,29 @@ public class KMostOrLessInformativeCategorizer implements LowLevelCategorizer, C
 
         final List<Sample> targetConcepts = context.getClusterSummaries()
                 .stream()
-                .map(ClusterSummary::calculateCentroidAttributes)
-                .map(Sample::new)
+                .map(clusterSummary -> new Sample(clusterSummary.calculateCentroidAttributes(), clusterSummary.getLabel()))
                 .collect(Collectors.toList());
 
         final Comparator<Sample> comparator;
         if (context.getPredictedCategory() == Category.KNOWN) {
-            comparator = Comparator.comparing(sample -> BayesianErrorEstimation
+            comparator = Comparator.comparing(sample -> 1 - BayesianErrorEstimation
                     .distanceProbability(sample, targetConcepts, context.getKnownLabels()));
         } else {
-            comparator = Comparator.comparing(sample -> 1 - BayesianErrorEstimation
+            comparator = Comparator.comparing(sample -> BayesianErrorEstimation
                     .distanceProbability(sample, targetConcepts, context.getKnownLabels()));
         }
 
-        final List<Sample> samplesSortedByInformationGain = context.getSamplesAttributes()
-                .stream()
-                .map(Sample::new)
-                .sorted(comparator)
-                .collect(Collectors.toList());
+        final List<Sample> samplesSortedByInformationGain = new ArrayList<>();
+
+        for (int i = 0; i < context.getSamplesAttributes().size(); ++i) {
+            samplesSortedByInformationGain.add(
+                    new Sample(
+                            context.getSamplesAttributes().get(i),
+                            context.getSamplesLabels().get(i)));
+
+        }
+
+        samplesSortedByInformationGain.sort(comparator);
 
         final List<Sample> kSelected = samplesSortedByInformationGain
                 .subList(0, this.getNumericParameters().get(K).intValue());
