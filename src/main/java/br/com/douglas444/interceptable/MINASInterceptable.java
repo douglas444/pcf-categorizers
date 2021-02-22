@@ -14,6 +14,8 @@ import java.util.HashMap;
 
 public class MINASInterceptable implements Interceptable, Configurable {
 
+    private DSClassifierExecutor executor;
+
     private static final String TEMPORARY_MEMORY_MAX_SIZE = "Temporary memory max size";
     private static final String MINIMUM_CLUSTER_SIZE = "Minimum cluster size";
     private static final String WINDOW_SIZE = "Window size";
@@ -63,7 +65,7 @@ public class MINASInterceptable implements Interceptable, Configurable {
     }
 
     @Override
-    public void execute(Interceptor interceptor) {
+    public boolean execute(Interceptor interceptor) {
 
 
         final boolean incrementallyUpdate;
@@ -104,13 +106,19 @@ public class MINASInterceptable implements Interceptable, Configurable {
             fileReaders[i] = new DSFileReader(",", FileUtil.getFileReader(files[i]));
         }
 
+        this.executor = new DSClassifierExecutor();
+
         try {
-            DSClassifierExecutor.start(minasController, true, 1,
-                    fileReaders);
+            return executor.start(minasController, true, 1, fileReaders);
         } catch (IOException e) {
             e.printStackTrace();
         }
+        return false;
+    }
 
+    @Override
+    public void stop() {
+        executor.interrupt();
     }
 
     @Override

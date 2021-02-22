@@ -66,4 +66,5 @@ public class DistanceCategorizer implements HighLevelCategorizer, Configurable {
     public HashMap<String, Double> getNumericParameters() {
         return this.numericParameters;
     }
+
 }
