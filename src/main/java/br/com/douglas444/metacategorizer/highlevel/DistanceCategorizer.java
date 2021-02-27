@@ -26,7 +26,9 @@ public class DistanceCategorizer implements HighLevelCategorizer, Configurable {
     @Override
     public Category categorize(Context context) {
 
-        double bayesianErrorEstimation = getValue(context.getPatternClusterSummary(), context.getClusterSummaries(),
+        double bayesianErrorEstimation = getValue(
+                context.getPatternClusterSummary(),
+                context.getClusterSummaries(),
                 context.getKnownLabels());
 
         if (bayesianErrorEstimation > this.numericParameters.get(THRESHOLD)) {
@@ -40,11 +42,11 @@ public class DistanceCategorizer implements HighLevelCategorizer, Configurable {
                            final List<ClusterSummary> knownClusterSummaries,
                            final Set<Integer> knownLabels) {
 
-        final Sample targetConceptCentroid = new Sample(targetClusterSummary.calculateCentroidAttributes(), null);
+        final Sample targetConceptCentroid = new Sample(targetClusterSummary.getCentroidAttributes(), null);
 
         final List<Sample> knownConceptsCentroids = knownClusterSummaries
                 .stream()
-                .map(clusterSummary -> new Sample(clusterSummary.calculateCentroidAttributes(), clusterSummary.getLabel()))
+                .map(clusterSummary -> new Sample(clusterSummary.getCentroidAttributes(), clusterSummary.getLabel()))
                 .collect(Collectors.toList());
 
         double bayesianErrorEstimation;

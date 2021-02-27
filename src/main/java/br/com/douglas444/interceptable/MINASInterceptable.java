@@ -91,7 +91,7 @@ public class MINASInterceptable implements Interceptable, Configurable {
                 this.numericParameters.get(RANDOM_GENERATOR_SEED).intValue(),
                 interceptor);
 
-        final MINASController minasController = minasBuilder.build();
+        MINASController controller = minasBuilder.build();
 
         final String[] files = Arrays.stream(this.nominalParameters
                 .get(DATASET_FILE_PATH)
@@ -109,7 +109,7 @@ public class MINASInterceptable implements Interceptable, Configurable {
         this.executor = new DSClassifierExecutor();
 
         try {
-            return executor.start(minasController, true, 1, fileReaders);
+            return this.executor.start(controller, 1, fileReaders);
         } catch (IOException e) {
             e.printStackTrace();
         }

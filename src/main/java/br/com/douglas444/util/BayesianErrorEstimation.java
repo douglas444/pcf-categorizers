@@ -65,7 +65,7 @@ public class BayesianErrorEstimation {
         }
 
         final List<ClusterSummary> closestClusterSummaries = new ArrayList<>();
-        final Sample targetCentroid = new Sample(target.calculateCentroidAttributes(), null);
+        final Sample targetCentroid = new Sample(target.getCentroidAttributes(), null);
 
         knownLabels.forEach((knownLabel) -> {
 
@@ -73,8 +73,8 @@ public class BayesianErrorEstimation {
                     .stream()
                     .filter(summary -> summary.getLabel().equals(knownLabel))
                     .min(Comparator.comparing((ClusterSummary clusterSummary) -> {
-                        final Sample centroid = new Sample(clusterSummary.calculateCentroidAttributes(), null);
-                        return clusterSummary.calculateStandardDeviation() * centroid.distance(targetCentroid);
+                        final Sample centroid = new Sample(clusterSummary.getCentroidAttributes(), null);
+                        return clusterSummary.getStandardDeviation() * centroid.distance(targetCentroid);
                     }))
                     .orElse(targetSummaries.get(0));
 
@@ -87,8 +87,8 @@ public class BayesianErrorEstimation {
         final double n = closestClusterSummaries
                 .stream()
                 .map(summary -> {
-                    final Sample centroid = new Sample(summary.calculateCentroidAttributes(), null);
-                    return summary.calculateStandardDeviation() * centroid.distance(targetCentroid);
+                    final Sample centroid = new Sample(summary.getCentroidAttributes(), null);
+                    return summary.getStandardDeviation() * centroid.distance(targetCentroid);
                 })
                 .min(Double::compare)
                 .map(x -> Math.pow(1 / x, dimensionality))
@@ -105,13 +105,13 @@ public class BayesianErrorEstimation {
         final double d = closestClusterSummaries
                 .stream()
                 .map(summary -> {
-                    final Sample centroid = new Sample(summary.calculateCentroidAttributes(), null);
-                    return summary.calculateStandardDeviation() * centroid.distance(targetCentroid);
+                    final Sample centroid = new Sample(summary.getCentroidAttributes(), null);
+                    return summary.getStandardDeviation() * centroid.distance(targetCentroid);
                 })
-                .map(x -> Math.pow(1 / x, dimensionality))
+                .map(x -> Math.pow(1/x, dimensionality))
                 .reduce(0.0, Double::sum);
 
-        final double probability = n / d;
+        final double probability = n/d;
         return calculateNormalizedError(knownLabels, probability);
     }
 
@@ -132,8 +132,8 @@ public class BayesianErrorEstimation {
                     .stream()
                     .filter(clusterSummary -> clusterSummary.getLabel().equals(knownLabel))
                     .min(Comparator.comparing((ClusterSummary clusterSummary) -> {
-                        final Sample centroid = new Sample(clusterSummary.calculateCentroidAttributes(), null);
-                        final Sample targetCentroid = new Sample(target.calculateCentroidAttributes(), null);
+                        final Sample centroid = new Sample(clusterSummary.getCentroidAttributes(), null);
+                        final Sample targetCentroid = new Sample(target.getCentroidAttributes(), null);
                         return centroid.distance(targetCentroid);
                     }))
                     .orElse(targetClusterSummaries.get(0));
@@ -205,16 +205,16 @@ public class BayesianErrorEstimation {
 
         summaries = new ArrayList<>(summaries);
 
-        final double standardDeviation = summary.calculateStandardDeviation();
+        final double standardDeviation = summary.getStandardDeviation();
 
         final List<ClusterSummary> neighboursLevel1 = new ArrayList<>();
         for (ClusterSummary clusterSummary : summaries) {
 
             final double range = factor * Math.sqrt(standardDeviation)
-                    + factor * Math.sqrt(clusterSummary.calculateStandardDeviation());
+                    + factor * Math.sqrt(clusterSummary.getStandardDeviation());
 
-            final Sample clusterSummaryCentroid = new Sample(clusterSummary.calculateCentroidAttributes(), null);
-            final Sample summaryCentroid = new Sample(summary.calculateCentroidAttributes(), null);
+            final Sample clusterSummaryCentroid = new Sample(clusterSummary.getCentroidAttributes(), null);
+            final Sample summaryCentroid = new Sample(summary.getCentroidAttributes(), null);
 
             if (clusterSummaryCentroid.distance(summaryCentroid) <= range) {
                 neighboursLevel1.add(clusterSummary);
@@ -227,14 +227,14 @@ public class BayesianErrorEstimation {
 
         for (ClusterSummary neighbour : neighboursLevel1) {
 
-            final double neighbourStandardDeviation = neighbour.calculateStandardDeviation();
+            final double neighbourStandardDeviation = neighbour.getStandardDeviation();
 
             for (ClusterSummary clusterSummary : summaries) {
 
-                final double range = Math.sqrt(neighbourStandardDeviation) + Math.sqrt(clusterSummary.calculateStandardDeviation());
+                final double range = Math.sqrt(neighbourStandardDeviation) + Math.sqrt(clusterSummary.getStandardDeviation());
 
-                final Sample clusterSummaryCentroid = new Sample(clusterSummary.calculateCentroidAttributes(), null);
-                final Sample summaryCentroid = new Sample(summary.calculateCentroidAttributes(), null);
+                final Sample clusterSummaryCentroid = new Sample(clusterSummary.getCentroidAttributes(), null);
+                final Sample summaryCentroid = new Sample(summary.getCentroidAttributes(), null);
                 if (clusterSummaryCentroid.distance(summaryCentroid) <= range) {
                     neighboursLevel2.add(clusterSummary);
                 }

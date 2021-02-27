@@ -29,7 +29,7 @@ public class KMedoidsCategorizer implements LowLevelCategorizer, Configurable {
     @Override
     public Category categorize(Context context) {
 
-        final Sample centroid = new Sample(context.getPatternClusterSummary().calculateCentroidAttributes(), null);
+        final Sample centroid = new Sample(context.getPatternClusterSummary().getCentroidAttributes(), null);
 
         final List<Sample> sortedSamples = context.getSamplesAttributes()
                 .stream()

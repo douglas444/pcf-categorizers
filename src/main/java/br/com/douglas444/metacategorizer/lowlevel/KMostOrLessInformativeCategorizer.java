@@ -36,7 +36,7 @@ public class KMostOrLessInformativeCategorizer implements LowLevelCategorizer, C
 
         final List<Sample> targetConcepts = context.getClusterSummaries()
                 .stream()
-                .map(clusterSummary -> new Sample(clusterSummary.calculateCentroidAttributes(), clusterSummary.getLabel()))
+                .map(clusterSummary -> new Sample(clusterSummary.getCentroidAttributes(), clusterSummary.getLabel()))
                 .collect(Collectors.toList());
 
         final Comparator<Sample> comparator;
