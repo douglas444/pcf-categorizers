@@ -118,7 +118,9 @@ public class MINASInterceptable implements Interceptable, Configurable {
 
     @Override
     public void stop() {
-        executor.interrupt();
+        if (this.executor != null) {
+            executor.interrupt();
+        }
     }
 
     @Override
