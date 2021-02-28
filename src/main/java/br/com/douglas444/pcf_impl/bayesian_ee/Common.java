@@ -1,4 +1,4 @@
-package br.com.douglas444.bayesian_ee;
+package br.com.douglas444.pcf_impl.bayesian_ee;
 
 import java.util.Set;
 

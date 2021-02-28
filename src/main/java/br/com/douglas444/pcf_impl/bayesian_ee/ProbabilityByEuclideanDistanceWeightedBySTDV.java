@@ -1,6 +1,6 @@
-package br.com.douglas444.bayesian_ee;
+package br.com.douglas444.pcf_impl.bayesian_ee;
 
-import br.com.douglas444.commons.TypeConversion;
+import br.com.douglas444.pcf_impl.commons.TypeConversion;
 import br.com.douglas444.streams.datastructures.Sample;
 import br.ufu.facom.pcf.core.ClusterSummary;
 

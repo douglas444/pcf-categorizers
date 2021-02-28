@@ -1,33 +1,34 @@
-package br.com.douglas444.metacategorizer.highlevel;
+package br.com.douglas444.pcf_impl.metacategorizer.highlevel;
 
-import br.com.douglas444.bayesian_ee.ProbabilityByEuclideanDistanceWeightedBySTDV;
+import br.com.douglas444.pcf_impl.bayesian_ee.ProbabilityBySharedNeighboursInRange;
 import br.ufu.facom.pcf.core.*;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
-public class WeightedDistanceCategorizer implements HighLevelCategorizer, Configurable {
+public class SharedNeighboursCategorizer implements HighLevelCategorizer, Configurable {
 
     private static final String THRESHOLD = "Threshold";
-    private static final String DIMENSIONALITY = "Dimensionality";
+    private static final String FACTOR = "Factor";
 
     private static final double DEFAULT_THRESHOLD = 0.8;
-    private static final double DEFAULT_DIMENSIONALITY = 1;
+    private static final double DEFAULT_FACTOR = 2;
 
     private final HashMap<String, String> nominalParameters;
     private final HashMap<String, Double> numericParameters;
 
-    public WeightedDistanceCategorizer() {
+    public SharedNeighboursCategorizer() {
         this.nominalParameters = new HashMap<>();
         this.numericParameters = new HashMap<>();
         this.numericParameters.put(THRESHOLD, DEFAULT_THRESHOLD);
+        this.numericParameters.put(FACTOR, DEFAULT_FACTOR);
     }
 
     @Override
     public Category categorize(Context context) {
 
-        final double bayesianErrorEstimation = getValue(
+        double bayesianErrorEstimation = getValue(
                 context.getPatternClusterSummary(),
                 context.getClusterSummaries(),
                 context.getKnownLabels());
@@ -49,17 +50,16 @@ public class WeightedDistanceCategorizer implements HighLevelCategorizer, Config
             bayesianErrorEstimation = 1;
         } else {
 
-            bayesianErrorEstimation = ProbabilityByEuclideanDistanceWeightedBySTDV.estimateError(
+            bayesianErrorEstimation = ProbabilityBySharedNeighboursInRange.estimateError(
                     targetClusterSummary,
                     knownClusterSummaries,
                     knownLabels,
-                    this.numericParameters.get(DIMENSIONALITY).intValue());
+                    this.numericParameters.get(FACTOR));
 
         }
 
         return bayesianErrorEstimation;
     }
-
     @Override
     public HashMap<String, String> getNominalParameters() {
         return this.nominalParameters;
@@ -69,5 +69,4 @@ public class WeightedDistanceCategorizer implements HighLevelCategorizer, Config
     public HashMap<String, Double> getNumericParameters() {
         return this.numericParameters;
     }
-
 }

@@ -1,8 +1,8 @@
-package br.com.douglas444.interceptable;
+package br.com.douglas444.pcf_impl.interceptable;
 
 import br.com.douglas444.minas.MINASBuilder;
 import br.com.douglas444.minas.MINASController;
-import br.com.douglas444.commons.FileUtil;
+import br.com.douglas444.pcf_impl.commons.FileUtil;
 import br.com.douglas444.streams.StreamsFileReader;
 import br.com.douglas444.streams.processor.StreamsProcessorExecutor;
 import br.ufu.facom.pcf.core.*;

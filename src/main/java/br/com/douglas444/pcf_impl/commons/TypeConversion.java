@@ -1,4 +1,4 @@
-package br.com.douglas444.commons;
+package br.com.douglas444.pcf_impl.commons;
 
 import br.com.douglas444.streams.datastructures.Sample;
 import br.ufu.facom.pcf.core.ClusterSummary;
