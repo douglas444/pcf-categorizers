@@ -1,10 +1,10 @@
 package br.com.douglas444.interceptable;
 
-import br.com.douglas444.dsframework.DSClassifierExecutor;
-import br.com.douglas444.dsframework.DSFileReader;
 import br.com.douglas444.minas.MINASBuilder;
 import br.com.douglas444.minas.MINASController;
 import br.com.douglas444.commons.FileUtil;
+import br.com.douglas444.streams.StreamsFileReader;
+import br.com.douglas444.streams.processor.StreamsProcessorExecutor;
 import br.ufu.facom.pcf.core.*;
 
 import java.io.IOException;
@@ -13,7 +13,7 @@ import java.util.HashMap;
 
 public class MINASInterceptable implements Interceptable, Configurable {
 
-    private DSClassifierExecutor executor;
+    private StreamsProcessorExecutor executor;
 
     private static final String TEMPORARY_MEMORY_MAX_SIZE = "Temporary memory max size";
     private static final String MINIMUM_CLUSTER_SIZE = "Minimum cluster size";
@@ -69,7 +69,6 @@ public class MINASInterceptable implements Interceptable, Configurable {
     @Override
     public boolean execute(Interceptor interceptor) {
 
-
         final boolean incrementallyUpdate;
         if (this.numericParameters.get(INCREMENTALLY_UPDATE_DECISION_MODEL).equals(0d)) {
             incrementallyUpdate = false;
@@ -102,13 +101,13 @@ public class MINASInterceptable implements Interceptable, Configurable {
                 .filter(file -> !file.isEmpty())
                 .toArray(String[]::new);
 
-        final DSFileReader[] fileReaders = new DSFileReader[files.length];
+        final StreamsFileReader[] fileReaders = new StreamsFileReader[files.length];
 
         for (int i = 0; i < files.length; i++) {
-            fileReaders[i] = new DSFileReader(",", FileUtil.getFileReader(files[i]));
+            fileReaders[i] = new StreamsFileReader(",", FileUtil.getFileReader(files[i]));
         }
 
-        this.executor = new DSClassifierExecutor();
+        this.executor = new StreamsProcessorExecutor();
 
         try {
 
@@ -127,7 +126,7 @@ public class MINASInterceptable implements Interceptable, Configurable {
     @Override
     public void stop() {
         if (this.executor != null) {
-            executor.interrupt();
+            this.executor.interrupt();
         }
     }
 

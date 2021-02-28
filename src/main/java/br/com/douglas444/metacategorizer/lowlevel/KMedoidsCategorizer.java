@@ -1,8 +1,8 @@
 package br.com.douglas444.metacategorizer.lowlevel;
 
 import br.com.douglas444.commons.TypeConversion;
-import br.com.douglas444.mltk.datastructure.Sample;
 import br.com.douglas444.commons.Oracle;
+import br.com.douglas444.streams.datastructures.Sample;
 import br.ufu.facom.pcf.core.Category;
 import br.ufu.facom.pcf.core.Configurable;
 import br.ufu.facom.pcf.core.Context;

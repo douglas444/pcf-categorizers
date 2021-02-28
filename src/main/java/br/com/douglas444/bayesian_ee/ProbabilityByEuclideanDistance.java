@@ -1,6 +1,6 @@
 package br.com.douglas444.bayesian_ee;
 
-import br.com.douglas444.mltk.datastructure.Sample;
+import br.com.douglas444.streams.datastructures.Sample;
 
 import java.util.*;
 

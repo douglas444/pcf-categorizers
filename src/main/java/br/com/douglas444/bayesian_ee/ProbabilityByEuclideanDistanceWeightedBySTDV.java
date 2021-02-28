@@ -1,7 +1,7 @@
 package br.com.douglas444.bayesian_ee;
 
 import br.com.douglas444.commons.TypeConversion;
-import br.com.douglas444.mltk.datastructure.Sample;
+import br.com.douglas444.streams.datastructures.Sample;
 import br.ufu.facom.pcf.core.ClusterSummary;
 
 import java.util.*;
