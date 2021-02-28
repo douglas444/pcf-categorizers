@@ -1,7 +1,8 @@
 package br.com.douglas444.metacategorizer.highlevel;
 
-import br.com.douglas444.util.BayesianErrorEstimation;
+import br.com.douglas444.bayesian_ee.ProbabilityByEuclideanDistance;
 import br.com.douglas444.mltk.datastructure.Sample;
+import br.com.douglas444.commons.TypeConversion;
 import br.ufu.facom.pcf.core.*;
 
 import java.util.HashMap;
@@ -12,7 +13,10 @@ import java.util.stream.Collectors;
 public class DistanceCategorizer implements HighLevelCategorizer, Configurable {
 
     private static final String THRESHOLD = "Threshold";
+    private static final String DIMENSIONALITY = "Dimensionality";
+
     private static final double DEFAULT_THRESHOLD = 0.8;
+    private static final double DEFAULT_DIMENSIONALITY = 1;
 
     private final HashMap<String, String> nominalParameters;
     private final HashMap<String, Double> numericParameters;
@@ -21,12 +25,13 @@ public class DistanceCategorizer implements HighLevelCategorizer, Configurable {
         this.nominalParameters = new HashMap<>();
         this.numericParameters = new HashMap<>();
         this.numericParameters.put(THRESHOLD, DEFAULT_THRESHOLD);
+        this.numericParameters.put(DIMENSIONALITY, DEFAULT_DIMENSIONALITY);
     }
 
     @Override
     public Category categorize(Context context) {
 
-        double bayesianErrorEstimation = getValue(
+        final double bayesianErrorEstimation = getValue(
                 context.getPatternClusterSummary(),
                 context.getClusterSummaries(),
                 context.getKnownLabels());
@@ -38,24 +43,28 @@ public class DistanceCategorizer implements HighLevelCategorizer, Configurable {
         }
     }
 
-    public double getValue(final ClusterSummary targetClusterSummary,
-                           final List<ClusterSummary> knownClusterSummaries,
+    public double getValue(final ClusterSummary targetConcept,
+                           final List<ClusterSummary> knownConcepts,
                            final Set<Integer> knownLabels) {
 
-        final Sample targetConceptCentroid = new Sample(targetClusterSummary.getCentroidAttributes(), null);
-
-        final List<Sample> knownConceptsCentroids = knownClusterSummaries
+        final List<Sample> knownConceptsCentroids = knownConcepts
                 .stream()
-                .map(clusterSummary -> new Sample(clusterSummary.getCentroidAttributes(), clusterSummary.getLabel()))
+                .map(TypeConversion::toSample)
                 .collect(Collectors.toList());
 
-        double bayesianErrorEstimation;
+        final double bayesianErrorEstimation;
+
         if (knownConceptsCentroids.isEmpty()) {
             bayesianErrorEstimation = 1;
         } else {
-            bayesianErrorEstimation = BayesianErrorEstimation
-                    .distanceProbability(targetConceptCentroid, knownConceptsCentroids, knownLabels);
+
+            bayesianErrorEstimation = ProbabilityByEuclideanDistance.estimateError(
+                    TypeConversion.toSample(targetConcept),
+                    knownConceptsCentroids,
+                    knownLabels,
+                    this.numericParameters.get(DIMENSIONALITY).intValue());
         }
+
         return bayesianErrorEstimation;
     }
 

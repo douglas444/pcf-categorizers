@@ -1,4 +1,4 @@
-package br.com.douglas444.util;
+package br.com.douglas444.commons;
 
 import br.com.douglas444.mltk.datastructure.Sample;
 import br.ufu.facom.pcf.core.Category;

@@ -4,11 +4,10 @@ import br.com.douglas444.dsframework.DSClassifierExecutor;
 import br.com.douglas444.dsframework.DSFileReader;
 import br.com.douglas444.minas.MINASBuilder;
 import br.com.douglas444.minas.MINASController;
-import br.com.douglas444.util.FileUtil;
+import br.com.douglas444.commons.FileUtil;
 import br.ufu.facom.pcf.core.*;
 
 import java.io.IOException;
-import java.net.URL;
 import java.util.Arrays;
 import java.util.HashMap;
 
@@ -27,7 +26,8 @@ public class MINASInterceptable implements Interceptable, Configurable {
     private static final String HEATER_NUMBER_OF_CLUSTERS_PER_LABEL = "Heater clusters per label";
     private static final String NOVELTY_DETECTION_NUMBER_OF_CLUSTERS = "Number of cluster for ND";
     private static final String RANDOM_GENERATOR_SEED = "Seed";
-    private static final String DATASET_FILE_PATH = "Dataset csv's (separated by ';')";
+    private static final String DATASET_FILE_PATH = "Dataset CSV's (separated by ';')";
+    private static final String LOG_INTERVAL = "Log interval";
 
     private static final double DEFAULT_TEMPORARY_MEMORY_MAX_SIZE = 2000;
     private static final double DEFAULT_MINIMUM_CLUSTER_SIZE = 20;
@@ -40,6 +40,7 @@ public class MINASInterceptable implements Interceptable, Configurable {
     private static final double DEFAULT_HEATER_NUMBER_OF_CLUSTERS_PER_LABEL = 100;
     private static final double DEFAULT_NOVELTY_DETECTION_NUMBER_OF_CLUSTERS = 100;
     private static final double DEFAULT_RANDOM_GENERATOR_SEED = 0;
+    private static final double DEFAULT_LOG_INTERVAL = 1000;
 
     final private HashMap<String, Double> numericParameters;
     final private HashMap<String, String> nominalParameters;
@@ -59,6 +60,7 @@ public class MINASInterceptable implements Interceptable, Configurable {
         this.numericParameters.put(NOVELTY_DETECTION_NUMBER_OF_CLUSTERS, DEFAULT_NOVELTY_DETECTION_NUMBER_OF_CLUSTERS);
         this.numericParameters.put(HEATER_NUMBER_OF_CLUSTERS_PER_LABEL, DEFAULT_HEATER_NUMBER_OF_CLUSTERS_PER_LABEL);
         this.numericParameters.put(RANDOM_GENERATOR_SEED, DEFAULT_RANDOM_GENERATOR_SEED);
+        this.numericParameters.put(LOG_INTERVAL, DEFAULT_LOG_INTERVAL);
 
         this.nominalParameters = new HashMap<>();
         this.nominalParameters.put(DATASET_FILE_PATH, "");
@@ -91,7 +93,7 @@ public class MINASInterceptable implements Interceptable, Configurable {
                 this.numericParameters.get(RANDOM_GENERATOR_SEED).intValue(),
                 interceptor);
 
-        MINASController controller = minasBuilder.build();
+        final MINASController controller = minasBuilder.build();
 
         final String[] files = Arrays.stream(this.nominalParameters
                 .get(DATASET_FILE_PATH)
@@ -109,10 +111,16 @@ public class MINASInterceptable implements Interceptable, Configurable {
         this.executor = new DSClassifierExecutor();
 
         try {
-            return this.executor.start(controller, 1, fileReaders);
+
+            return this.executor.start(
+                    controller,
+                    this.getNumericParameters().get(LOG_INTERVAL).intValue(),
+                    fileReaders);
+
         } catch (IOException e) {
             e.printStackTrace();
         }
+
         return false;
     }
 

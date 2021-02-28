@@ -1,7 +1,8 @@
 package br.com.douglas444.metacategorizer.lowlevel;
 
+import br.com.douglas444.commons.TypeConversion;
 import br.com.douglas444.mltk.datastructure.Sample;
-import br.com.douglas444.util.Oracle;
+import br.com.douglas444.commons.Oracle;
 import br.ufu.facom.pcf.core.Category;
 import br.ufu.facom.pcf.core.Configurable;
 import br.ufu.facom.pcf.core.Context;
@@ -11,7 +12,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
-import java.util.stream.Collectors;
 
 public class KRandomCategorizer implements LowLevelCategorizer, Configurable {
 
@@ -35,13 +35,15 @@ public class KRandomCategorizer implements LowLevelCategorizer, Configurable {
 
         final Random random = new Random(this.numericParameters.get(SEED).intValue());
 
-        final List<Sample> candidates = context.getSamplesAttributes().stream().map(Sample::new)
-                .collect(Collectors.toList());
+        final List<Sample> candidates = TypeConversion.toSampleList(
+                context.getSamplesAttributes(),
+                context.getSamplesLabels());
 
         final List<Sample> kSelected = new ArrayList<>();
 
         for (int i = 0; i < this.numericParameters.get(K).intValue(); ++i) {
-            kSelected.add(candidates.remove(random.nextInt() % candidates.size()));
+            final Sample selected = candidates.remove(random.nextInt(candidates.size()));
+            kSelected.add(selected);
         }
 
         return Oracle.categoryOf(kSelected, context.getKnownLabels());

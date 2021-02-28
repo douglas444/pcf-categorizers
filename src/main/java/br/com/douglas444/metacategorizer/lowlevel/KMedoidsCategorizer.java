@@ -1,7 +1,8 @@
 package br.com.douglas444.metacategorizer.lowlevel;
 
+import br.com.douglas444.commons.TypeConversion;
 import br.com.douglas444.mltk.datastructure.Sample;
-import br.com.douglas444.util.Oracle;
+import br.com.douglas444.commons.Oracle;
 import br.ufu.facom.pcf.core.Category;
 import br.ufu.facom.pcf.core.Configurable;
 import br.ufu.facom.pcf.core.Context;
@@ -29,11 +30,14 @@ public class KMedoidsCategorizer implements LowLevelCategorizer, Configurable {
     @Override
     public Category categorize(Context context) {
 
-        final Sample centroid = new Sample(context.getPatternClusterSummary().getCentroidAttributes(), null);
+        final Sample centroid = TypeConversion.toSample(context.getPatternClusterSummary());
 
-        final List<Sample> sortedSamples = context.getSamplesAttributes()
+        final List<Sample> samples = TypeConversion.toSampleList(
+                context.getSamplesAttributes(),
+                context.getSamplesLabels());
+
+        final List<Sample> sortedSamples = samples
                 .stream()
-                .map(Sample::new)
                 .sorted(Comparator.comparing(sample -> sample.distance(centroid)))
                 .collect(Collectors.toList());
 

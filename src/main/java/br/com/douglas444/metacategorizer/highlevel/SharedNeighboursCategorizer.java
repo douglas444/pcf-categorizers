@@ -1,6 +1,6 @@
 package br.com.douglas444.metacategorizer.highlevel;
 
-import br.com.douglas444.util.BayesianErrorEstimation;
+import br.com.douglas444.bayesian_ee.ProbabilityBySharedNeighboursInRange;
 import br.ufu.facom.pcf.core.*;
 
 import java.util.HashMap;
@@ -10,10 +10,10 @@ import java.util.Set;
 public class SharedNeighboursCategorizer implements HighLevelCategorizer, Configurable {
 
     private static final String THRESHOLD = "Threshold";
-    private static final String FACTOR = "FACTOR";
+    private static final String FACTOR = "Factor";
 
     private static final double DEFAULT_THRESHOLD = 0.8;
-    private static final double DEFAULT_FACTOR = 0.05;
+    private static final double DEFAULT_FACTOR = 2;
 
     private final HashMap<String, String> nominalParameters;
     private final HashMap<String, Double> numericParameters;
@@ -28,7 +28,9 @@ public class SharedNeighboursCategorizer implements HighLevelCategorizer, Config
     @Override
     public Category categorize(Context context) {
 
-        double bayesianErrorEstimation = getValue(context.getPatternClusterSummary(), context.getClusterSummaries(),
+        double bayesianErrorEstimation = getValue(
+                context.getPatternClusterSummary(),
+                context.getClusterSummaries(),
                 context.getKnownLabels());
 
         if (bayesianErrorEstimation > this.numericParameters.get(THRESHOLD)) {
@@ -41,14 +43,21 @@ public class SharedNeighboursCategorizer implements HighLevelCategorizer, Config
     public double getValue(final ClusterSummary targetClusterSummary,
                            final List<ClusterSummary> knownClusterSummaries,
                            final Set<Integer> knownLabels) {
-        double bayesianErrorEstimation;
+
+        final double bayesianErrorEstimation;
 
         if (knownClusterSummaries.isEmpty()) {
             bayesianErrorEstimation = 1;
         } else {
-            bayesianErrorEstimation = BayesianErrorEstimation.sharedNeighboursProbability(targetClusterSummary,
-                    knownClusterSummaries, knownLabels, this.numericParameters.get(FACTOR));
+
+            bayesianErrorEstimation = ProbabilityBySharedNeighboursInRange.estimateError(
+                    targetClusterSummary,
+                    knownClusterSummaries,
+                    knownLabels,
+                    this.numericParameters.get(FACTOR));
+
         }
+
         return bayesianErrorEstimation;
     }
     @Override

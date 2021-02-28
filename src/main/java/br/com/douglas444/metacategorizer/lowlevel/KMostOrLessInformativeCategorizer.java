@@ -1,9 +1,9 @@
 package br.com.douglas444.metacategorizer.lowlevel;
 
-import br.com.douglas444.minas.MicroCluster;
+import br.com.douglas444.bayesian_ee.ProbabilityByEuclideanDistance;
+import br.com.douglas444.commons.TypeConversion;
 import br.com.douglas444.mltk.datastructure.Sample;
-import br.com.douglas444.util.BayesianErrorEstimation;
-import br.com.douglas444.util.Oracle;
+import br.com.douglas444.commons.Oracle;
 import br.ufu.facom.pcf.core.*;
 
 import java.util.*;
@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 public class KMostOrLessInformativeCategorizer implements LowLevelCategorizer, Configurable {
 
     private static final String K = "K";
-    private static final String DIMENSIONALITY = "DIMENSIONALITY";
+    private static final String DIMENSIONALITY = "Dimensionality";
 
     private static final double DEFAULT_K = 1;
     private static final double DEFAULT_DIMENSIONALITY = 1;
@@ -36,33 +36,33 @@ public class KMostOrLessInformativeCategorizer implements LowLevelCategorizer, C
 
         final List<Sample> targetConcepts = context.getClusterSummaries()
                 .stream()
-                .map(clusterSummary -> new Sample(clusterSummary.getCentroidAttributes(), clusterSummary.getLabel()))
+                .map(TypeConversion::toSample)
                 .collect(Collectors.toList());
+
+        final List<Sample> samples = TypeConversion.toSampleList(
+                context.getSamplesAttributes(),
+                context.getSamplesLabels());
 
         final Comparator<Sample> comparator;
         if (context.getPredictedCategory() == Category.KNOWN) {
-            comparator = Comparator.comparing(sample -> 1 - BayesianErrorEstimation
-                    .distanceProbability(sample, targetConcepts, context.getKnownLabels()));
+
+            comparator = Comparator.comparing(sample -> 1 - ProbabilityByEuclideanDistance.estimateError(
+                    sample,
+                    targetConcepts,
+                    context.getKnownLabels(),
+                    this.numericParameters.get(DIMENSIONALITY).intValue()));
+
         } else {
-            comparator = Comparator.comparing(sample -> BayesianErrorEstimation
-                    .distanceProbability(sample, targetConcepts, context.getKnownLabels()));
+
+            comparator = Comparator.comparing(sample -> ProbabilityByEuclideanDistance.estimateError(
+                    sample,
+                    targetConcepts,
+                    context.getKnownLabels(),
+                    this.numericParameters.get(DIMENSIONALITY).intValue()));
         }
 
-        final List<Sample> samplesSortedByInformationGain = new ArrayList<>();
-
-        for (int i = 0; i < context.getSamplesAttributes().size(); ++i) {
-            samplesSortedByInformationGain.add(
-                    new Sample(
-                            context.getSamplesAttributes().get(i),
-                            context.getSamplesLabels().get(i)));
-
-        }
-
-        samplesSortedByInformationGain.sort(comparator);
-
-        final List<Sample> kSelected = samplesSortedByInformationGain
-                .subList(0, this.getNumericParameters().get(K).intValue());
-
+        samples.sort(comparator);
+        final List<Sample> kSelected = samples.subList(0, this.getNumericParameters().get(K).intValue());
         return Oracle.categoryOf(kSelected, context.getKnownLabels());
 
     }
