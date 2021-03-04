@@ -8,10 +8,17 @@ import java.util.Set;
 
 public class Oracle {
 
-    public static Category categoryOf(final List<Sample> samples, final Set<Integer> knownLabels) {
+    public static Category categoryOf(final List<Sample> samples,
+                                      final List<Sample> preLabeledSamples,
+                                      final Set<Integer> knownLabels) {
 
-        final int sentence = samples.stream()
-                .map(sample -> !knownLabels.contains(sample.getY()))
+        int sentence = samples.stream()
+                .map(sample -> !knownLabels.contains(labelOf(sample)))
+                .map(isNovel -> isNovel ? 1 : -1)
+                .reduce(0, Integer::sum);
+
+        sentence += preLabeledSamples.stream()
+                .map(sample -> !knownLabels.contains(labelOf(sample)))
                 .map(isNovel -> isNovel ? 1 : -1)
                 .reduce(0, Integer::sum);
 
@@ -21,6 +28,10 @@ public class Oracle {
             return Category.KNOWN;
         }
 
+    }
+    
+    public static Integer labelOf(final Sample sample) {
+        return sample.getY();
     }
 
 }

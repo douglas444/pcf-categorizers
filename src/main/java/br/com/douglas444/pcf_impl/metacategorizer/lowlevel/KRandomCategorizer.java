@@ -35,9 +35,15 @@ public class KRandomCategorizer implements LowLevelCategorizer, Configurable {
 
         final Random random = new Random(this.numericParameters.get(SEED).intValue());
 
+        final List<Sample> preLabeledSamples = TypeConversion.toPreLabeledSampleList(
+                context.getSamplesAttributes(),
+                context.getSamplesLabels(),
+                context.getIsPreLabeled());
+
         final List<Sample> candidates = TypeConversion.toSampleList(
                 context.getSamplesAttributes(),
-                context.getSamplesLabels());
+                context.getSamplesLabels(),
+                context.getIsPreLabeled());
 
         final List<Sample> kSelected = new ArrayList<>();
 
@@ -46,7 +52,7 @@ public class KRandomCategorizer implements LowLevelCategorizer, Configurable {
             kSelected.add(selected);
         }
 
-        return Oracle.categoryOf(kSelected, context.getKnownLabels());
+        return Oracle.categoryOf(kSelected, preLabeledSamples, context.getKnownLabels());
 
 
     }

@@ -12,15 +12,34 @@ public class TypeConversion {
         return new Sample(clusterSummary.getCentroidAttributes(), clusterSummary.getLabel());
     }
 
-    public static List<Sample> toSampleList(final List<double[]> samplesAttributes,
-                                            final List<Integer> labels) {
+    public static List<Sample> toSampleList(final double[][] samplesAttributes,
+                                            final int[] labels,
+                                            final boolean[] isPreLabeled) {
+
+        final List<Sample> samples = new ArrayList<>();
+        for (int i = 0; i < samplesAttributes.length; ++i) {
+            if (isPreLabeled == null || !isPreLabeled[i]) {
+                samples.add(new Sample(samplesAttributes[i], labels[i]));
+            }
+        }
+        return samples;
+    }
+
+    public static List<Sample> toPreLabeledSampleList(final double[][] samplesAttributes,
+                                                      final int[] labels,
+                                                      final boolean[] isPreLabeled) {
 
         final List<Sample> samples = new ArrayList<>();
 
-        for (int i = 0; i < samplesAttributes.size(); ++i) {
-            samples.add(new Sample(samplesAttributes.get(i), labels.get(i)));
-        }
+        if (isPreLabeled == null) {
+            return samples;
 
+        }
+        for (int i = 0; i < samplesAttributes.length; ++i) {
+            if (isPreLabeled[i]) {
+                samples.add(new Sample(samplesAttributes[i], labels[i]));
+            }
+        }
         return samples;
     }
 

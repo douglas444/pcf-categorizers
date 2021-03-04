@@ -2,9 +2,12 @@ package br.com.douglas444.pcf_impl.interceptable;
 
 import br.com.douglas444.minas.MINASBuilder;
 import br.com.douglas444.minas.MINASController;
+import br.com.douglas444.ndc.processor.StreamsProcessor;
+import br.com.douglas444.ndc.processor.StreamsProcessorBuilder;
 import br.com.douglas444.pcf_impl.commons.FileUtil;
 import br.com.douglas444.ndc.StreamsFileReader;
 import br.com.douglas444.ndc.processor.StreamsProcessorExecutor;
+import br.com.douglas444.pcf_impl.commons.StreamsUtil;
 import br.ufu.facom.pcf.core.*;
 
 import java.io.IOException;
@@ -93,35 +96,16 @@ public class MINASInterceptable implements Interceptable, Configurable {
                 interceptor);
 
         final MINASController controller = minasBuilder.build();
-
-        final String[] files = Arrays.stream(this.nominalParameters
-                .get(DATASET_FILE_PATH)
-                .split(";"))
-                .map(file -> file.replace(" ", ""))
-                .filter(file -> !file.isEmpty())
-                .toArray(String[]::new);
-
-        final StreamsFileReader[] fileReaders = new StreamsFileReader[files.length];
-
-        for (int i = 0; i < files.length; i++) {
-            fileReaders[i] = new StreamsFileReader(",", FileUtil.getFileReader(files[i]));
-        }
-
         this.executor = new StreamsProcessorExecutor();
 
-        try {
+        return StreamsUtil.execute(
+                controller,
+                this.nominalParameters.get(DATASET_FILE_PATH).split(";"),
+                executor,
+                this.getNumericParameters().get(LOG_INTERVAL).intValue());
 
-            return this.executor.start(
-                    controller,
-                    this.getNumericParameters().get(LOG_INTERVAL).intValue(),
-                    fileReaders);
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return false;
     }
+
 
     @Override
     public void stop() {

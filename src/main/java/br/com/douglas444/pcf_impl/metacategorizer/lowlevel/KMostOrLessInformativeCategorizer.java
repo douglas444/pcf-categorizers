@@ -30,18 +30,20 @@ public class KMostOrLessInformativeCategorizer implements LowLevelCategorizer, C
     @Override
     public Category categorize(Context context) {
 
-        if (context.getSamplesAttributes().isEmpty()) {
-            throw new IllegalArgumentException();
-        }
-
         final List<Sample> targetConcepts = context.getClusterSummaries()
                 .stream()
                 .map(TypeConversion::toSample)
                 .collect(Collectors.toList());
 
+        final List<Sample> preLabeledSamples = TypeConversion.toPreLabeledSampleList(
+                context.getSamplesAttributes(),
+                context.getSamplesLabels(),
+                context.getIsPreLabeled());
+
         final List<Sample> samples = TypeConversion.toSampleList(
                 context.getSamplesAttributes(),
-                context.getSamplesLabels());
+                context.getSamplesLabels(),
+                context.getIsPreLabeled());
 
         final Comparator<Sample> comparator;
         if (context.getPredictedCategory() == Category.KNOWN) {
@@ -62,8 +64,9 @@ public class KMostOrLessInformativeCategorizer implements LowLevelCategorizer, C
         }
 
         samples.sort(comparator);
+
         final List<Sample> kSelected = samples.subList(0, this.getNumericParameters().get(K).intValue());
-        return Oracle.categoryOf(kSelected, context.getKnownLabels());
+        return Oracle.categoryOf(kSelected, preLabeledSamples, context.getKnownLabels());
 
     }
 

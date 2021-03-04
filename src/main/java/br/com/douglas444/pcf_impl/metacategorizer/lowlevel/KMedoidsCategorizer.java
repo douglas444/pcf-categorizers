@@ -32,9 +32,15 @@ public class KMedoidsCategorizer implements LowLevelCategorizer, Configurable {
 
         final Sample centroid = TypeConversion.toSample(context.getPatternClusterSummary());
 
+        final List<Sample> preLabeledSamples = TypeConversion.toPreLabeledSampleList(
+                context.getSamplesAttributes(),
+                context.getSamplesLabels(),
+                context.getIsPreLabeled());
+
         final List<Sample> samples = TypeConversion.toSampleList(
                 context.getSamplesAttributes(),
-                context.getSamplesLabels());
+                context.getSamplesLabels(),
+                context.getIsPreLabeled());
 
         final List<Sample> sortedSamples = samples
                 .stream()
@@ -42,7 +48,7 @@ public class KMedoidsCategorizer implements LowLevelCategorizer, Configurable {
                 .collect(Collectors.toList());
 
         final List<Sample> kMedoids = sortedSamples.subList(0, this.numericParameters.get(K).intValue());
-        return Oracle.categoryOf(kMedoids, context.getKnownLabels());
+        return Oracle.categoryOf(kMedoids, preLabeledSamples, context.getKnownLabels());
 
     }
 
