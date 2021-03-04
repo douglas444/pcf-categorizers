@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>br.com.douglas444</groupId>
-    <artifactId>pcf-impl</artifactId>
+    <artifactId>pcf-categorizers</artifactId>
     <version>1.0-SNAPSHOT</version>
     <build>
         <plugins>
@@ -45,16 +45,6 @@
         <dependency>
             <groupId>br.com.douglas444</groupId>
             <artifactId>streams</artifactId>
-            <version>1.0-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>br.com.douglas444</groupId>
-            <artifactId>minas</artifactId>
-            <version>1.0-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>br.com.douglas444</groupId>
-            <artifactId>echo</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
         <dependency>
