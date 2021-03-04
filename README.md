@@ -34,7 +34,7 @@ Once the process is successfully finished, the JAR will be available at the ```t
 
 Once you have the JAR, load it in the classpath section of the pcf-gui. After that, 
 the interfaces *HighLevelCategorizer* and *LowLevelCategorizer* implementations 
-should be listed at the graphical interface.
+should be listed in the graphical interface.
 
 ### Observations:
 
