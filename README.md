@@ -1,6 +1,6 @@
 # pcf-categorizers
 
-This project is a set of HighLevelCategorizer and LowLevelCategorizer pcf's classes implementations (https://github.com/douglas444/pcf).
+This project is a set of pcf's HighLevelCategorizer and LowLevelCategorizer classes implementations (https://github.com/douglas444/pcf).
 
 ## Requirements
 
