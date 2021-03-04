@@ -1,6 +1,6 @@
-package br.com.douglas444.pcf_impl.metacategorizer.highlevel;
+package br.com.douglas444.pcf.impl.metacategorizer.highlevel;
 
-import br.com.douglas444.pcf_impl.bayesian_ee.ProbabilityByEuclideanDistanceWeightedBySTDV;
+import br.com.douglas444.pcf.impl.estimators.ProbabilityByEuclideanDistanceWeightedBySTDV;
 import br.ufu.facom.pcf.core.*;
 
 import java.util.HashMap;

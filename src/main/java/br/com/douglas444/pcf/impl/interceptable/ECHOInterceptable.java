@@ -1,9 +1,9 @@
-package br.com.douglas444.pcf_impl.interceptable;
+package br.com.douglas444.pcf.impl.interceptable;
 
 import br.com.douglas444.echo.ECHOBuilder;
 import br.com.douglas444.echo.ECHOController;
-import br.com.douglas444.ndc.processor.StreamsProcessorExecutor;
-import br.com.douglas444.pcf_impl.commons.StreamsUtil;
+import br.com.douglas444.pcf.impl.commons.StreamsUtil;
+import br.com.douglas444.streams.processor.StreamsProcessorExecutor;
 import br.ufu.facom.pcf.core.Configurable;
 import br.ufu.facom.pcf.core.Interceptable;
 import br.ufu.facom.pcf.core.Interceptor;

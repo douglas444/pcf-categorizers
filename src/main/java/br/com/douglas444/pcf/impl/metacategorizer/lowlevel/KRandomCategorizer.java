@@ -1,54 +1,59 @@
-package br.com.douglas444.pcf_impl.metacategorizer.lowlevel;
+package br.com.douglas444.pcf.impl.metacategorizer.lowlevel;
 
-import br.com.douglas444.pcf_impl.commons.TypeConversion;
-import br.com.douglas444.pcf_impl.commons.Oracle;
-import br.com.douglas444.ndc.datastructures.Sample;
+import br.com.douglas444.pcf.impl.commons.TypeConversion;
+import br.com.douglas444.pcf.impl.commons.Oracle;
+import br.com.douglas444.streams.datastructures.Sample;
 import br.ufu.facom.pcf.core.Category;
 import br.ufu.facom.pcf.core.Configurable;
 import br.ufu.facom.pcf.core.Context;
 import br.ufu.facom.pcf.core.LowLevelCategorizer;
 
-import java.util.Comparator;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Random;
 
-public class KMedoidsCategorizer implements LowLevelCategorizer, Configurable {
+public class KRandomCategorizer implements LowLevelCategorizer, Configurable {
 
     private static final String K = "K";
+    private static final String SEED = "Seed";
     private static final double DEFAULT_K = 1;
+    private static final double DEFAULT_SEED = 0;
 
     private final HashMap<String, String> nominalParameters;
     private final HashMap<String, Double> numericParameters;
 
-    public KMedoidsCategorizer() {
+    public KRandomCategorizer() {
         this.nominalParameters = new HashMap<>();
         this.numericParameters = new HashMap<>();
         this.numericParameters.put(K, DEFAULT_K);
+        this.numericParameters.put(SEED, DEFAULT_SEED);
     }
 
     @Override
     public Category categorize(Context context) {
 
-        final Sample centroid = TypeConversion.toSample(context.getPatternClusterSummary());
+        final Random random = new Random(this.numericParameters.get(SEED).intValue());
 
         final List<Sample> preLabeledSamples = TypeConversion.toPreLabeledSampleList(
                 context.getSamplesAttributes(),
                 context.getSamplesLabels(),
                 context.getIsPreLabeled());
 
-        final List<Sample> samples = TypeConversion.toSampleList(
+        final List<Sample> candidates = TypeConversion.toSampleList(
                 context.getSamplesAttributes(),
                 context.getSamplesLabels(),
                 context.getIsPreLabeled());
 
-        final List<Sample> sortedSamples = samples
-                .stream()
-                .sorted(Comparator.comparing(sample -> sample.distance(centroid)))
-                .collect(Collectors.toList());
+        final List<Sample> kSelected = new ArrayList<>();
 
-        final List<Sample> kMedoids = sortedSamples.subList(0, this.numericParameters.get(K).intValue());
-        return Oracle.categoryOf(kMedoids, preLabeledSamples, context.getKnownLabels());
+        for (int i = 0; i < this.numericParameters.get(K).intValue(); ++i) {
+            final Sample selected = candidates.remove(random.nextInt(candidates.size()));
+            kSelected.add(selected);
+        }
+
+        return Oracle.categoryOf(kSelected, preLabeledSamples, context.getKnownLabels());
+
 
     }
 

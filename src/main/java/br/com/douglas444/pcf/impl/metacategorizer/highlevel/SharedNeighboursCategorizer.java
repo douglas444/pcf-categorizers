@@ -1,37 +1,34 @@
-package br.com.douglas444.pcf_impl.metacategorizer.highlevel;
+package br.com.douglas444.pcf.impl.metacategorizer.highlevel;
 
-import br.com.douglas444.pcf_impl.bayesian_ee.ProbabilityByEuclideanDistance;
-import br.com.douglas444.pcf_impl.commons.TypeConversion;
-import br.com.douglas444.ndc.datastructures.Sample;
+import br.com.douglas444.pcf.impl.estimators.ProbabilityBySharedNeighboursInRange;
 import br.ufu.facom.pcf.core.*;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
-public class DistanceCategorizer implements HighLevelCategorizer, Configurable {
+public class SharedNeighboursCategorizer implements HighLevelCategorizer, Configurable {
 
     private static final String THRESHOLD = "Threshold";
-    private static final String DIMENSIONALITY = "Dimensionality";
+    private static final String FACTOR = "Factor";
 
     private static final double DEFAULT_THRESHOLD = 0.8;
-    private static final double DEFAULT_DIMENSIONALITY = 1;
+    private static final double DEFAULT_FACTOR = 2;
 
     private final HashMap<String, String> nominalParameters;
     private final HashMap<String, Double> numericParameters;
 
-    public DistanceCategorizer() {
+    public SharedNeighboursCategorizer() {
         this.nominalParameters = new HashMap<>();
         this.numericParameters = new HashMap<>();
         this.numericParameters.put(THRESHOLD, DEFAULT_THRESHOLD);
-        this.numericParameters.put(DIMENSIONALITY, DEFAULT_DIMENSIONALITY);
+        this.numericParameters.put(FACTOR, DEFAULT_FACTOR);
     }
 
     @Override
     public Category categorize(Context context) {
 
-        final double bayesianErrorEstimation = getValue(
+        double bayesianErrorEstimation = getValue(
                 context.getPatternClusterSummary(),
                 context.getClusterSummaries(),
                 context.getKnownLabels());
@@ -43,31 +40,26 @@ public class DistanceCategorizer implements HighLevelCategorizer, Configurable {
         }
     }
 
-    public double getValue(final ClusterSummary targetConcept,
-                           final List<ClusterSummary> knownConcepts,
+    public double getValue(final ClusterSummary targetClusterSummary,
+                           final List<ClusterSummary> knownClusterSummaries,
                            final Set<Integer> knownLabels) {
-
-        final List<Sample> knownConceptsCentroids = knownConcepts
-                .stream()
-                .map(TypeConversion::toSample)
-                .collect(Collectors.toList());
 
         final double bayesianErrorEstimation;
 
-        if (knownConceptsCentroids.isEmpty()) {
+        if (knownClusterSummaries.isEmpty()) {
             bayesianErrorEstimation = 1;
         } else {
 
-            bayesianErrorEstimation = ProbabilityByEuclideanDistance.estimateError(
-                    TypeConversion.toSample(targetConcept),
-                    knownConceptsCentroids,
+            bayesianErrorEstimation = ProbabilityBySharedNeighboursInRange.estimateError(
+                    targetClusterSummary,
+                    knownClusterSummaries,
                     knownLabels,
-                    this.numericParameters.get(DIMENSIONALITY).intValue());
+                    this.numericParameters.get(FACTOR));
+
         }
 
         return bayesianErrorEstimation;
     }
-
     @Override
     public HashMap<String, String> getNominalParameters() {
         return this.nominalParameters;
@@ -77,5 +69,4 @@ public class DistanceCategorizer implements HighLevelCategorizer, Configurable {
     public HashMap<String, Double> getNumericParameters() {
         return this.numericParameters;
     }
-
 }

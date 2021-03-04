@@ -1,17 +1,11 @@
-package br.com.douglas444.pcf_impl.interceptable;
+package br.com.douglas444.pcf.impl.interceptable;
 
 import br.com.douglas444.minas.MINASBuilder;
 import br.com.douglas444.minas.MINASController;
-import br.com.douglas444.ndc.processor.StreamsProcessor;
-import br.com.douglas444.ndc.processor.StreamsProcessorBuilder;
-import br.com.douglas444.pcf_impl.commons.FileUtil;
-import br.com.douglas444.ndc.StreamsFileReader;
-import br.com.douglas444.ndc.processor.StreamsProcessorExecutor;
-import br.com.douglas444.pcf_impl.commons.StreamsUtil;
+import br.com.douglas444.pcf.impl.commons.StreamsUtil;
+import br.com.douglas444.streams.processor.StreamsProcessorExecutor;
 import br.ufu.facom.pcf.core.*;
 
-import java.io.IOException;
-import java.util.Arrays;
 import java.util.HashMap;
 
 public class MINASInterceptable implements Interceptable, Configurable {

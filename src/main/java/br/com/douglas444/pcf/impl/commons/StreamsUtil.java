@@ -1,9 +1,9 @@
-package br.com.douglas444.pcf_impl.commons;
+package br.com.douglas444.pcf.impl.commons;
 
-import br.com.douglas444.ndc.StreamsFileReader;
-import br.com.douglas444.ndc.datastructures.DynamicConfusionMatrixCompatible;
-import br.com.douglas444.ndc.processor.StreamsProcessor;
-import br.com.douglas444.ndc.processor.StreamsProcessorExecutor;
+import br.com.douglas444.streams.processor.StreamsFileReader;
+import br.com.douglas444.streams.datastructures.DynamicConfusionMatrixCompatible;
+import br.com.douglas444.streams.processor.StreamsProcessor;
+import br.com.douglas444.streams.processor.StreamsProcessorExecutor;
 
 import java.io.IOException;
 import java.util.Arrays;
