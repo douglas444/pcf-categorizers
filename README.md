@@ -5,24 +5,12 @@ This project is a set of pcf's HighLevelCategorizer and LowLevelCategorizer clas
 ## Requirements
 
 * Apache Maven 3.6.3 or higher
-
-## Maven Dependencies
-
-* streams 1.0-SNAPSHOT (https://github.com/douglas444/streams)
-* minas 1.0-SNAPSHOT (https://github.com/douglas444/minas)
-* pcf-categorizers 1.0-SNAPSHOT (https://github.com/douglas444/pcf-categorizers)
-* pcf-core 1.0-SNAPSHOT (https://github.com/douglas444/pcf)
-
-## Requirements
-
-* Apache Maven 3.6.3 or higher
+* Java 8
 
 ## Maven Dependencies
 
 * streams 1.0-SNAPSHOT (https://github.com/douglas444/streams)
 * pcf-core 1.0-SNAPSHOT (https://github.com/douglas444/pcf)
-* junit-jupiter 5.6.2 (available at Maven Central Repository)
-* commons-math3 3.6.1 (available at Maven Central Repository)
 
 ## How do I build the JAR from the source code?
 
