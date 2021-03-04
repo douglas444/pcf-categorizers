@@ -1,12 +1,17 @@
 package br.com.douglas444.pcf.impl.metacategorizer.lowlevel;
 
-import br.com.douglas444.pcf.impl.estimators.ProbabilityByEuclideanDistance;
 import br.com.douglas444.pcf.impl.commons.Oracle;
 import br.com.douglas444.pcf.impl.commons.TypeConversion;
+import br.com.douglas444.pcf.impl.estimators.ProbabilityByEuclideanDistance;
 import br.com.douglas444.streams.datastructures.Sample;
-import br.ufu.facom.pcf.core.*;
+import br.ufu.facom.pcf.core.Category;
+import br.ufu.facom.pcf.core.Configurable;
+import br.ufu.facom.pcf.core.Context;
+import br.ufu.facom.pcf.core.LowLevelCategorizer;
 
-import java.util.*;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
 import java.util.stream.Collectors;
 
 public class KMostOrLessInformativeCategorizer implements LowLevelCategorizer, Configurable {

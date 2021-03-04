@@ -4,7 +4,9 @@ import br.com.douglas444.minas.MINASBuilder;
 import br.com.douglas444.minas.MINASController;
 import br.com.douglas444.pcf.impl.commons.StreamsUtil;
 import br.com.douglas444.streams.processor.StreamsProcessorExecutor;
-import br.ufu.facom.pcf.core.*;
+import br.ufu.facom.pcf.core.Configurable;
+import br.ufu.facom.pcf.core.Interceptable;
+import br.ufu.facom.pcf.core.Interceptor;
 
 import java.util.HashMap;
 

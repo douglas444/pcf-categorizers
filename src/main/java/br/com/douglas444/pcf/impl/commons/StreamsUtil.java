@@ -1,7 +1,7 @@
 package br.com.douglas444.pcf.impl.commons;
 
-import br.com.douglas444.streams.processor.StreamsFileReader;
 import br.com.douglas444.streams.datastructures.DynamicConfusionMatrixCompatible;
+import br.com.douglas444.streams.processor.StreamsFileReader;
 import br.com.douglas444.streams.processor.StreamsProcessor;
 import br.com.douglas444.streams.processor.StreamsProcessorExecutor;
 
