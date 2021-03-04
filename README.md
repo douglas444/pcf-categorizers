@@ -10,27 +10,41 @@ This project is a set of pcf's HighLevelCategorizer and LowLevelCategorizer clas
 
 * streams 1.0-SNAPSHOT (https://github.com/douglas444/streams)
 * minas 1.0-SNAPSHOT (https://github.com/douglas444/minas)
-* echo 1.0-SNAPSHOT (https://github.com/douglas444/echo)
+* pcf-categorizers 1.0-SNAPSHOT (https://github.com/douglas444/pcf-categorizers)
 * pcf-core 1.0-SNAPSHOT (https://github.com/douglas444/pcf)
 
-## Build the JAR
+## Requirements
 
-To build without the dependencies: 
+* Apache Maven 3.6.3 or higher
 
-```mvn clean install```
+## Maven Dependencies
 
-To build with the dependencies included (except pcf-core dependency): 
+* streams 1.0-SNAPSHOT (https://github.com/douglas444/streams)
+* pcf-core 1.0-SNAPSHOT (https://github.com/douglas444/pcf)
+* junit-jupiter 5.6.2 (available at Maven Central Repository)
+* commons-math3 3.6.1 (available at Maven Central Repository)
 
-```mvn clean install assembly:single```
+## How do I build the JAR from the source code?
 
-### Observations about the commands to build the JAR
+To build the JAR without the dependencies, execute the following command line from the root folder:
 
-1. We configured the build process in a way that, even if you choose to build with the dependencies included, the pcf-core dependency will not be included. 
+```mvn clean package```
+
+To build the JAR with the dependencies included, execute the following command line from the root folder:
+
+```mvn clean package assembly:single```
+
+Once the process is finished, the JAR will be available at the ```target``` folder as 
+```pcf-categorizers.jar``` or ```pcf-categorizers-jar-with-dependencies.jar```.
+
+### Observations:
+
+* We configured the build process in a way that, even if you choose to build with the dependencies included, the pcf-core dependency will not be included. 
 The reason is that the pcf-core dependency is already provided by the pcf-gui when the JAR is loaded through the interface.
 
-2. If you choose to build the project without the dependencies included, make sure to load all the JAR dependencies individually at the pcf-gui interface. 
+* If you choose to build the project without the dependencies included, make sure to load all the JAR dependencies individually at the pcf-gui interface. 
 There is no need to load the pcf-core dependency though, since it is already provided by the pcf-gui.
 
-## Using it
+## How do I use pcf-categorizers at pcf-gui?
 
-Once you have the JAR, load it in classpath section of the pcf-gui, after that, the implementations should be listed at the interface.
+Once you have the JAR, load it in classpath section of the pcf-gui, after that, the class ECHOInterceptable should be listed at the interface.
