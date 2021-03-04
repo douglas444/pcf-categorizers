@@ -1,6 +1,6 @@
-# pcf-impl
+# pcf-categorizers
 
-This project is a set of implementations for the Pattern Categorizer Framework (pcf).
+This project is a set of HighLevelCategorizer and LowLevelCategorizer pcf's classes implementations (https://github.com/douglas444/pcf).
 
 ## Requirements
 
