@@ -13,7 +13,7 @@ interfaces implementations, intended to be used at *pcf-gui* (https://github.com
 * streams 1.0-SNAPSHOT (https://github.com/douglas444/streams)
 * pcf-core 1.0-SNAPSHOT (https://github.com/douglas444/pcf)
 
-## How to use *pcf-categorizers* with *pcf-gui*?
+## How to use *pcf-categorizers* with *pcf-gui*
 
 First of all you need to build the project's JAR.
 This can be done by executing the following command line from the root folder:
@@ -33,8 +33,8 @@ Once the process is successfully finished, the JAR will be available at the ```t
 ```pcf-categorizers.jar``` or ```pcf-categorizers-jar-with-dependencies.jar```.
 
 Once you have the JAR, load it in the classpath section of the pcf-gui. After that, 
-the classes *HighLevelCategorizer* and *LowLevelCategorizer* implementations 
-should be listed at the interface.
+the interfaces *HighLevelCategorizer* and *LowLevelCategorizer* implementations 
+should be listed at the graphical interface.
 
 ### Observations:
 
@@ -42,10 +42,10 @@ should be listed at the interface.
 even if you choose to build with the dependencies included, 
 the *pcf-core* dependency will not be included. 
 The reason is that the *pcf-core* dependency is already provided 
-by the *pcf-gui* when the JAR is loaded through the interface.
+by the *pcf-gui* when the JAR is loaded through the graphical interface.
 
 * If you choose to build the project without the dependencies 
 included, make sure to load all the dependencies' JAR
-individually at the *pcf-gui* interface. There is no need to load the *pcf-core*
+individually at the *pcf-gui* graphical interface. There is no need to load the *pcf-core*
 dependency though, since it is already provided by the *pcf-gui*.
 
