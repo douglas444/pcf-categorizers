@@ -22,6 +22,7 @@ public class WeightedDistanceCategorizer implements HighLevelCategorizer, Config
         this.nominalParameters = new HashMap<>();
         this.numericParameters = new HashMap<>();
         this.numericParameters.put(THRESHOLD, DEFAULT_THRESHOLD);
+        this.numericParameters.put(DIMENSIONALITY, DEFAULT_DIMENSIONALITY);
     }
 
     @Override
