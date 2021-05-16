@@ -1,8 +1,8 @@
-package br.com.douglas444.pcf.categorizers.estimators;
+package br.com.douglas444.pcf.categorizers.commons;
 
 import java.util.Set;
 
-public class Common {
+public class Util {
 
     static double calculateNormalizedError(Set<Integer> knownLabels, double probability) {
 

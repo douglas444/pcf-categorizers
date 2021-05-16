@@ -1,13 +1,13 @@
 package br.com.douglas444.pcf.categorizers.highlevel;
 
-import br.com.douglas444.pcf.categorizers.estimators.ProbabilityBySharedNeighboursInRange;
+import br.com.douglas444.pcf.categorizers.estimators.SharedKernelNeighbours;
 import br.ufu.facom.pcf.core.*;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
-public class SharedNeighboursCategorizer implements HighLevelCategorizer, Configurable {
+public class SKNCentroidRisk implements HighLevelCategorizer, Configurable {
 
     private static final String THRESHOLD = "Threshold";
     private static final String FACTOR = "Factor";
@@ -18,7 +18,7 @@ public class SharedNeighboursCategorizer implements HighLevelCategorizer, Config
     private final HashMap<String, String> nominalParameters;
     private final HashMap<String, Double> numericParameters;
 
-    public SharedNeighboursCategorizer() {
+    public SKNCentroidRisk() {
         this.nominalParameters = new HashMap<>();
         this.numericParameters = new HashMap<>();
         this.numericParameters.put(THRESHOLD, DEFAULT_THRESHOLD);
@@ -40,19 +40,19 @@ public class SharedNeighboursCategorizer implements HighLevelCategorizer, Config
         }
     }
 
-    public double getValue(final ClusterSummary targetClusterSummary,
-                           final List<ClusterSummary> knownClusterSummaries,
+    public double getValue(final ClusterSummary target,
+                           final List<ClusterSummary> clusterSummaries,
                            final Set<Integer> knownLabels) {
 
         final double bayesianErrorEstimation;
 
-        if (knownClusterSummaries.isEmpty()) {
+        if (clusterSummaries.isEmpty()) {
             bayesianErrorEstimation = 1;
         } else {
 
-            bayesianErrorEstimation = ProbabilityBySharedNeighboursInRange.estimateError(
-                    targetClusterSummary,
-                    knownClusterSummaries,
+            bayesianErrorEstimation = SharedKernelNeighbours.estimateError(
+                    target,
+                    clusterSummaries,
                     knownLabels,
                     this.numericParameters.get(FACTOR));
 

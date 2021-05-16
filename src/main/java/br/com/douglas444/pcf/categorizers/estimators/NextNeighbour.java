@@ -1,17 +1,18 @@
 package br.com.douglas444.pcf.categorizers.estimators;
 
+import br.com.douglas444.pcf.categorizers.commons.Util;
 import br.com.douglas444.streams.datastructures.Sample;
 
 import java.util.*;
 
-public class ProbabilityByEuclideanDistance {
+public class NextNeighbour {
 
-    public static double estimateError(final Sample targetConceptCentroid,
-                                       final List<Sample> knownConceptsCentroids,
+    public static double estimateError(final Sample target,
+                                       final List<Sample> centroids,
                                        final Set<Integer> knownLabels,
                                        final int dimensionality) {
 
-        if (knownConceptsCentroids.isEmpty()) {
+        if (centroids.isEmpty()) {
             return 1;
         }
 
@@ -19,18 +20,18 @@ public class ProbabilityByEuclideanDistance {
 
         knownLabels.forEach((knownLabel) -> {
 
-            final Optional<Sample> optionalClosestCentroid = knownConceptsCentroids
+            final Optional<Sample> closestCentroid = centroids
                     .stream()
                     .filter(centroid -> centroid.getY().equals(knownLabel))
-                    .min(Comparator.comparing((Sample sample) -> sample.distance(targetConceptCentroid)));
+                    .min(Comparator.comparing((Sample sample) -> sample.distance(target)));
 
-            optionalClosestCentroid.ifPresent(closestCentroids::add);
+            closestCentroid.ifPresent(closestCentroids::add);
 
         });
 
         final double n = Math.pow(1.0 / closestCentroids
                 .stream()
-                .map(centroid -> centroid.distance(targetConceptCentroid))
+                .map(centroid -> centroid.distance(target))
                 .min(Double::compare)
                 .orElse(0.0), dimensionality);
 
@@ -44,11 +45,11 @@ public class ProbabilityByEuclideanDistance {
 
         final double d = closestCentroids
                 .stream()
-                .map(centroid -> Math.pow(1.0 / centroid.distance(targetConceptCentroid), dimensionality))
+                .map(centroid -> Math.pow(1.0 / centroid.distance(target), dimensionality))
                 .reduce(0.0, Double::sum);
 
         final double probability = n / d;
-        return Common.calculateNormalizedError(knownLabels, probability);
+        return Util.calculateNormalizedError(knownLabels, probability);
     }
 
 }

@@ -13,8 +13,18 @@ public class TypeConversion {
     }
 
     public static List<Sample> toSampleList(final double[][] samplesAttributes,
-                                            final int[] labels,
-                                            final boolean[] isPreLabeled) {
+                                            final int[] labels) {
+
+        final List<Sample> samples = new ArrayList<>();
+        for (int i = 0; i < samplesAttributes.length; ++i) {
+            samples.add(new Sample(samplesAttributes[i], labels[i]));
+        }
+        return samples;
+    }
+
+    public static List<Sample> toNotPreLabeledSampleList(final double[][] samplesAttributes,
+                                                         final int[] labels,
+                                                         final boolean[] isPreLabeled) {
 
         final List<Sample> samples = new ArrayList<>();
         for (int i = 0; i < samplesAttributes.length; ++i) {

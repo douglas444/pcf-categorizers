@@ -1,34 +1,33 @@
 package br.com.douglas444.pcf.categorizers.estimators;
 
 import br.com.douglas444.pcf.categorizers.commons.TypeConversion;
+import br.com.douglas444.pcf.categorizers.commons.Util;
 import br.com.douglas444.streams.datastructures.Sample;
 import br.ufu.facom.pcf.core.ClusterSummary;
 
 import java.util.*;
 
-public class ProbabilityByEuclideanDistanceWeightedBySTDV {
+public class NextDenserNeighbour {
 
-    public static double estimateError(final ClusterSummary targetConcept,
-                                       final List<ClusterSummary> knownConcepts,
+    public static double estimateError(final Sample sample,
+                                       final List<ClusterSummary> clusterSummaries,
                                        final Set<Integer> knownLabels,
                                        final int dimensionality) {
 
-        if (knownConcepts.isEmpty()) {
+        if (clusterSummaries.isEmpty()) {
             return 1;
         }
 
         final List<ClusterSummary> closestClusterSummaries = new ArrayList<>();
-        final Sample targetConceptCentroid = TypeConversion.toSample(targetConcept);
 
         knownLabels.forEach((knownLabel) -> {
 
-            final Optional<ClusterSummary> optionalClosestSummary = knownConcepts
+            final Optional<ClusterSummary> optionalClosestSummary = clusterSummaries
                     .stream()
                     .filter(summary -> summary.getLabel().equals(knownLabel))
                     .min(Comparator.comparing((ClusterSummary clusterSummary) -> {
                         final Sample centroid = TypeConversion.toSample(clusterSummary);
-                        return clusterSummary.getStandardDeviation()
-                                * centroid.distance(targetConceptCentroid);
+                        return clusterSummary.getStandardDeviation() * centroid.distance(sample);
                     }));
 
             optionalClosestSummary.ifPresent(closestClusterSummaries::add);
@@ -39,7 +38,7 @@ public class ProbabilityByEuclideanDistanceWeightedBySTDV {
                 .stream()
                 .map(summary -> {
                     final Sample centroid = TypeConversion.toSample(summary);
-                    return summary.getStandardDeviation() * centroid.distance(targetConceptCentroid);
+                    return summary.getStandardDeviation() * centroid.distance(sample);
                 })
                 .min(Double::compare)
                 .map(x -> Math.pow(1 / x, dimensionality))
@@ -57,13 +56,13 @@ public class ProbabilityByEuclideanDistanceWeightedBySTDV {
                 .stream()
                 .map(summary -> {
                     final Sample centroid = TypeConversion.toSample(summary);
-                    return summary.getStandardDeviation() * centroid.distance(targetConceptCentroid);
+                    return summary.getStandardDeviation() * centroid.distance(sample);
                 })
                 .map(x -> Math.pow(1 / x, dimensionality))
                 .reduce(0.0, Double::sum);
 
         final double probability = n / d;
-        return Common.calculateNormalizedError(knownLabels, probability);
+        return Util.calculateNormalizedError(knownLabels, probability);
     }
 
 }

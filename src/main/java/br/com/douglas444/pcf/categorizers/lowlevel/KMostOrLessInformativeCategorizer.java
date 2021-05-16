@@ -2,7 +2,7 @@ package br.com.douglas444.pcf.categorizers.lowlevel;
 
 import br.com.douglas444.pcf.categorizers.commons.Oracle;
 import br.com.douglas444.pcf.categorizers.commons.TypeConversion;
-import br.com.douglas444.pcf.categorizers.estimators.ProbabilityByEuclideanDistance;
+import br.com.douglas444.pcf.categorizers.estimators.NextNeighbour;
 import br.com.douglas444.streams.datastructures.Sample;
 import br.ufu.facom.pcf.core.Category;
 import br.ufu.facom.pcf.core.Configurable;
@@ -45,7 +45,7 @@ public class KMostOrLessInformativeCategorizer implements LowLevelCategorizer, C
                 context.getSamplesLabels(),
                 context.getIsPreLabeled());
 
-        final List<Sample> samples = TypeConversion.toSampleList(
+        final List<Sample> samples = TypeConversion.toNotPreLabeledSampleList(
                 context.getSamplesAttributes(),
                 context.getSamplesLabels(),
                 context.getIsPreLabeled());
@@ -53,7 +53,7 @@ public class KMostOrLessInformativeCategorizer implements LowLevelCategorizer, C
         final Comparator<Sample> comparator;
         if (context.getPredictedCategory() == Category.KNOWN) {
 
-            comparator = Comparator.comparing(sample -> 1 - ProbabilityByEuclideanDistance.estimateError(
+            comparator = Comparator.comparing(sample -> 1 - NextNeighbour.estimateError(
                     sample,
                     targetConcepts,
                     context.getKnownLabels(),
@@ -61,7 +61,7 @@ public class KMostOrLessInformativeCategorizer implements LowLevelCategorizer, C
 
         } else {
 
-            comparator = Comparator.comparing(sample -> ProbabilityByEuclideanDistance.estimateError(
+            comparator = Comparator.comparing(sample -> NextNeighbour.estimateError(
                     sample,
                     targetConcepts,
                     context.getKnownLabels(),

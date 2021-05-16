@@ -37,7 +37,7 @@ public class KMedoidsCategorizer implements LowLevelCategorizer, Configurable {
                 context.getSamplesLabels(),
                 context.getIsPreLabeled());
 
-        final List<Sample> samples = TypeConversion.toSampleList(
+        final List<Sample> samples = TypeConversion.toNotPreLabeledSampleList(
                 context.getSamplesAttributes(),
                 context.getSamplesLabels(),
                 context.getIsPreLabeled());

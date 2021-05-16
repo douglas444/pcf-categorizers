@@ -1,28 +1,29 @@
 package br.com.douglas444.pcf.categorizers.estimators;
 
 import br.com.douglas444.pcf.categorizers.commons.TypeConversion;
+import br.com.douglas444.pcf.categorizers.commons.Util;
 import br.com.douglas444.streams.datastructures.Sample;
 import br.ufu.facom.pcf.core.ClusterSummary;
 
 import java.util.*;
 
-public class ProbabilityBySharedNeighboursInRange {
+public class SharedKernelNeighbours {
 
-    public static double estimateError(final ClusterSummary targetConcept,
-                                       final List<ClusterSummary> knownConcepts,
+    public static double estimateError(final ClusterSummary target,
+                                       final List<ClusterSummary> clusterSummaries,
                                        final Set<Integer> knownLabels,
                                        final double factor) {
 
-        if (knownConcepts.isEmpty()) {
+        if (clusterSummaries.isEmpty()) {
             return 1;
         }
 
         final List<ClusterSummary> closestClusterSummaries = new ArrayList<>();
-        final Sample targetConceptCentroid = TypeConversion.toSample(targetConcept);
+        final Sample targetConceptCentroid = TypeConversion.toSample(target);
 
         knownLabels.forEach((knownLabel) -> {
 
-            final Optional<ClusterSummary> optionalClosestSummary = knownConcepts
+            final Optional<ClusterSummary> optionalClosestSummary = clusterSummaries
                     .stream()
                     .filter(clusterSummary -> clusterSummary.getLabel().equals(knownLabel))
                     .min(Comparator.comparing((ClusterSummary clusterSummary) -> {
@@ -34,12 +35,12 @@ public class ProbabilityBySharedNeighboursInRange {
 
         });
 
-        final List<ClusterSummary> neighbourhood = new ArrayList<>(knownConcepts);
+        final List<ClusterSummary> neighbourhood = new ArrayList<>(clusterSummaries);
         neighbourhood.removeAll(closestClusterSummaries);
 
         final double n = closestClusterSummaries
                 .stream()
-                .map(summary -> calculateSimilarity(summary, targetConcept, neighbourhood, factor))
+                .map(summary -> calculateSimilarity(summary, target, neighbourhood, factor))
                 .max(Double::compare)
                 .orElse(0.0);
 
@@ -49,7 +50,7 @@ public class ProbabilityBySharedNeighboursInRange {
 
         final double d = closestClusterSummaries
                 .stream()
-                .map(summary -> calculateSimilarity(summary, targetConcept, neighbourhood, factor))
+                .map(summary -> calculateSimilarity(summary, target, neighbourhood, factor))
                 .reduce(0.0, Double::sum);
 
         final double probability;
@@ -59,7 +60,7 @@ public class ProbabilityBySharedNeighboursInRange {
             probability = n / d;
         }
 
-        return Common.calculateNormalizedError(knownLabels, probability);
+        return Util.calculateNormalizedError(knownLabels, probability);
     }
 
     private static double calculateSimilarity(final ClusterSummary summary1,
@@ -70,25 +71,25 @@ public class ProbabilityBySharedNeighboursInRange {
         neighbourhood = new ArrayList<>(neighbourhood);
 
         final List<ClusterSummary> nearestNeighborsSummary1 =
-                new ArrayList<>(getNearestNeighbors(summary1, neighbourhood, factor));
+                new ArrayList<>(getKernelNeighbors(summary1, neighbourhood, factor));
 
         final List<ClusterSummary> nearestNeighborsSummary2 =
-                new ArrayList<>(getNearestNeighbors(summary2, neighbourhood, factor));
+                new ArrayList<>(getKernelNeighbors(summary2, neighbourhood, factor));
 
 
         return intersection(nearestNeighborsSummary1, nearestNeighborsSummary2).size();
 
     }
 
-    private static List<ClusterSummary> getNearestNeighbors(final ClusterSummary targetClusterSummary,
-                                                            List<ClusterSummary> clusterSummaries,
-                                                            final double factor) {
+    private static List<ClusterSummary> getKernelNeighbors(final ClusterSummary target,
+                                                           List<ClusterSummary> clusterSummaries,
+                                                           final double factor) {
 
         clusterSummaries = new ArrayList<>(clusterSummaries);
 
-        final double standardDeviation = targetClusterSummary.getStandardDeviation();
+        final double standardDeviation = target.getStandardDeviation();
         final List<ClusterSummary> neighboursLevel1 = new ArrayList<>();
-        final Sample targetClusterSummaryCentroid = TypeConversion.toSample(targetClusterSummary);
+        final Sample targetCentroid = TypeConversion.toSample(target);
 
         for (ClusterSummary clusterSummary : clusterSummaries) {
 
@@ -97,7 +98,7 @@ public class ProbabilityBySharedNeighboursInRange {
 
             final Sample clusterSummaryCentroid = TypeConversion.toSample(clusterSummary);
 
-            if (clusterSummaryCentroid.distance(targetClusterSummaryCentroid) <= range) {
+            if (clusterSummaryCentroid.distance(targetCentroid) <= range) {
                 neighboursLevel1.add(clusterSummary);
             }
 
@@ -117,7 +118,7 @@ public class ProbabilityBySharedNeighboursInRange {
 
                 final Sample clusterSummaryCentroid = TypeConversion.toSample(clusterSummary);
 
-                if (clusterSummaryCentroid.distance(targetClusterSummaryCentroid) <= range) {
+                if (clusterSummaryCentroid.distance(targetCentroid) <= range) {
                     neighboursLevel2.add(clusterSummary);
                 }
             }

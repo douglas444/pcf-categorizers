@@ -40,7 +40,7 @@ public class KRandomCategorizer implements LowLevelCategorizer, Configurable {
                 context.getSamplesLabels(),
                 context.getIsPreLabeled());
 
-        final List<Sample> candidates = TypeConversion.toSampleList(
+        final List<Sample> candidates = TypeConversion.toNotPreLabeledSampleList(
                 context.getSamplesAttributes(),
                 context.getSamplesLabels(),
                 context.getIsPreLabeled());
