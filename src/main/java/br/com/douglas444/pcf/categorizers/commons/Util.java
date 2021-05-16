@@ -4,7 +4,7 @@ import java.util.Set;
 
 public class Util {
 
-    static double calculateNormalizedError(final Set<Integer> knownLabels, final double probability) {
+    public static double calculateNormalizedError(final Set<Integer> knownLabels, final double probability) {
 
         final double error = 1 - probability;
         final double maxError = 1 - 1 / (double) knownLabels.size();
