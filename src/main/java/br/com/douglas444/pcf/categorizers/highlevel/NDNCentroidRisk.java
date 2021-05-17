@@ -1,7 +1,8 @@
 package br.com.douglas444.pcf.categorizers.highlevel;
 
 import br.com.douglas444.pcf.categorizers.commons.TypeConversion;
-import br.com.douglas444.pcf.categorizers.estimators.NextDenserNeighbour;
+import br.com.douglas444.pcf.categorizers.classifier.NextDenserNeighbour;
+import br.com.douglas444.pcf.categorizers.commons.Util;
 import br.com.douglas444.streams.datastructures.Sample;
 import br.ufu.facom.pcf.core.*;
 
@@ -42,25 +43,21 @@ public class NDNCentroidRisk implements HighLevelCategorizer, Configurable {
         }
     }
 
-    public double getValue(final Sample target,
-                           final List<ClusterSummary> clusterSummaries,
-                           final Set<Integer> knownLabels) {
-
-        final double bayesianErrorEstimation;
+    private double getValue(final Sample target,
+                            final List<ClusterSummary> clusterSummaries,
+                            final Set<Integer> knownLabels) {
 
         if (clusterSummaries.isEmpty()) {
-            bayesianErrorEstimation = 1;
-        } else {
-
-            bayesianErrorEstimation = NextDenserNeighbour.estimateError(
-                    target,
-                    clusterSummaries,
-                    knownLabels,
-                    this.numericParameters.get(DIMENSIONALITY).intValue());
-
+            return 1;
         }
 
-        return bayesianErrorEstimation;
+        final double risk = 1 - NextDenserNeighbour.calculateProbability(
+                target,
+                clusterSummaries,
+                knownLabels,
+                this.numericParameters.get(DIMENSIONALITY).intValue());
+
+        return Util.calculateNormalizedError(knownLabels, risk);
     }
 
     @Override

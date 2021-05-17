@@ -1,7 +1,6 @@
-package br.com.douglas444.pcf.categorizers.estimators;
+package br.com.douglas444.pcf.categorizers.classifier;
 
 import br.com.douglas444.pcf.categorizers.commons.TypeConversion;
-import br.com.douglas444.pcf.categorizers.commons.Util;
 import br.com.douglas444.streams.datastructures.Sample;
 import br.ufu.facom.pcf.core.ClusterSummary;
 
@@ -9,13 +8,13 @@ import java.util.*;
 
 public class NextDenserNeighbour {
 
-    public static double estimateError(final Sample sample,
-                                       final List<ClusterSummary> clusterSummaries,
-                                       final Set<Integer> knownLabels,
-                                       final int dimensionality) {
+    public static double calculateProbability(final Sample sample,
+                                              final List<ClusterSummary> clusterSummaries,
+                                              final Set<Integer> knownLabels,
+                                              final int dimensionality) {
 
         if (clusterSummaries.isEmpty()) {
-            return 1;
+            return 0;
         }
 
         final List<ClusterSummary> closestClusterSummaries = new ArrayList<>();
@@ -45,11 +44,11 @@ public class NextDenserNeighbour {
                 .orElse(0.0);
 
         if (Double.isInfinite(n)) {
-            return 0;
+            return 1;
         }
 
         if (closestClusterSummaries.size() == 1) {
-            return 1;
+            return 0;
         }
 
         final double d = closestClusterSummaries
@@ -61,8 +60,7 @@ public class NextDenserNeighbour {
                 .map(x -> Math.pow(1 / x, dimensionality))
                 .reduce(0.0, Double::sum);
 
-        final double probability = n / d;
-        return Util.calculateNormalizedError(knownLabels, probability);
+        return n / d;
     }
 
 }

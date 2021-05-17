@@ -1,8 +1,8 @@
 package br.com.douglas444.pcf.categorizers.highlevel;
 
 import br.com.douglas444.pcf.categorizers.commons.TypeConversion;
-import br.com.douglas444.pcf.categorizers.estimators.NextDenserNeighbour;
-import br.com.douglas444.pcf.categorizers.estimators.NextNeighbour;
+import br.com.douglas444.pcf.categorizers.classifier.NextDenserNeighbour;
+import br.com.douglas444.pcf.categorizers.commons.Util;
 import br.com.douglas444.streams.datastructures.Sample;
 import br.ufu.facom.pcf.core.*;
 
@@ -31,8 +31,12 @@ public class NDNAverageRisk implements HighLevelCategorizer, Configurable {
     @Override
     public Category categorize(final Context context) {
 
+        final List<Sample> samples = TypeConversion.toSampleList(
+                context.getSamplesAttributes(),
+                context.getSamplesLabels());
+
         final double bayesianErrorEstimation = getValue(
-                TypeConversion.toSampleList(context.getSamplesAttributes(), context.getSamplesLabels()),
+                samples,
                 context.getClusterSummaries(),
                 context.getKnownLabels());
 
@@ -43,9 +47,9 @@ public class NDNAverageRisk implements HighLevelCategorizer, Configurable {
         }
     }
 
-    public double getValue(final List<Sample> targetSamples,
-                           final List<ClusterSummary> clusterSummaries,
-                           final Set<Integer> knownLabels) {
+    private double getValue(final List<Sample> targetSamples,
+                            final List<ClusterSummary> clusterSummaries,
+                            final Set<Integer> knownLabels) {
 
         if (targetSamples.isEmpty()) {
             throw new IllegalStateException("List targetSamples cannot be empty");
@@ -59,7 +63,7 @@ public class NDNAverageRisk implements HighLevelCategorizer, Configurable {
 
         for (final Sample sample : targetSamples) {
 
-            riskSum += NextDenserNeighbour.estimateError(
+            riskSum += 1 - NextDenserNeighbour.calculateProbability(
                     sample,
                     clusterSummaries,
                     knownLabels,
@@ -67,7 +71,7 @@ public class NDNAverageRisk implements HighLevelCategorizer, Configurable {
         }
 
 
-        return riskSum / (double) targetSamples.size();
+        return Util.calculateNormalizedError(knownLabels,riskSum / (double) targetSamples.size());
 
     }
 

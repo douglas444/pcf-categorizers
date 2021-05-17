@@ -1,6 +1,7 @@
 package br.com.douglas444.pcf.categorizers.highlevel;
 
-import br.com.douglas444.pcf.categorizers.estimators.SharedKernelNeighbours;
+import br.com.douglas444.pcf.categorizers.classifier.SharedKernelNeighbours;
+import br.com.douglas444.pcf.categorizers.commons.Util;
 import br.ufu.facom.pcf.core.*;
 
 import java.util.HashMap;
@@ -40,25 +41,21 @@ public class SKNCentroidRisk implements HighLevelCategorizer, Configurable {
         }
     }
 
-    public double getValue(final ClusterSummary target,
-                           final List<ClusterSummary> clusterSummaries,
-                           final Set<Integer> knownLabels) {
-
-        final double bayesianErrorEstimation;
+    private double getValue(final ClusterSummary target,
+                            final List<ClusterSummary> clusterSummaries,
+                            final Set<Integer> knownLabels) {
 
         if (clusterSummaries.isEmpty()) {
-            bayesianErrorEstimation = 1;
-        } else {
-
-            bayesianErrorEstimation = SharedKernelNeighbours.estimateError(
-                    target,
-                    clusterSummaries,
-                    knownLabels,
-                    this.numericParameters.get(FACTOR));
-
+            return 1;
         }
 
-        return bayesianErrorEstimation;
+        final double risk = 1 - SharedKernelNeighbours.calculateProbability(
+                target,
+                clusterSummaries,
+                knownLabels,
+                this.numericParameters.get(FACTOR));
+
+        return Util.calculateNormalizedError(knownLabels, risk);
     }
     @Override
     public HashMap<String, String> getNominalParameters() {

@@ -1,7 +1,8 @@
 package br.com.douglas444.pcf.categorizers.highlevel;
 
 import br.com.douglas444.pcf.categorizers.commons.TypeConversion;
-import br.com.douglas444.pcf.categorizers.estimators.NextNeighbour;
+import br.com.douglas444.pcf.categorizers.commons.Util;
+import br.com.douglas444.pcf.categorizers.classifier.NextNeighbour;
 import br.com.douglas444.streams.datastructures.Sample;
 import br.ufu.facom.pcf.core.*;
 
@@ -43,29 +44,26 @@ public class NNCentroidRisk implements HighLevelCategorizer, Configurable {
         }
     }
 
-    public double getValue(final Sample target,
-                           final List<ClusterSummary> clusterSummaries,
-                           final Set<Integer> knownLabels) {
+    private double getValue(final Sample target,
+                            final List<ClusterSummary> clusterSummaries,
+                            final Set<Integer> knownLabels) {
 
-        final List<Sample> knownConceptsCentroids = clusterSummaries
+        if (clusterSummaries.isEmpty()) {
+            return  1;
+        }
+
+        final List<Sample> centroids = clusterSummaries
                 .stream()
                 .map(TypeConversion::toSample)
                 .collect(Collectors.toList());
 
-        final double bayesianErrorEstimation;
+        final double risk = 1 - NextNeighbour.calculateProbability(
+                target,
+                centroids,
+                knownLabels,
+                this.numericParameters.get(DIMENSIONALITY).intValue());
 
-        if (knownConceptsCentroids.isEmpty()) {
-            bayesianErrorEstimation = 1;
-        } else {
-
-            bayesianErrorEstimation = NextNeighbour.estimateError(
-                    target,
-                    knownConceptsCentroids,
-                    knownLabels,
-                    this.numericParameters.get(DIMENSIONALITY).intValue());
-        }
-
-        return bayesianErrorEstimation;
+        return Util.calculateNormalizedError(knownLabels, risk);
     }
 
     @Override

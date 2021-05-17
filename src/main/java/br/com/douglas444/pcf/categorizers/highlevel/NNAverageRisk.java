@@ -1,7 +1,8 @@
 package br.com.douglas444.pcf.categorizers.highlevel;
 
 import br.com.douglas444.pcf.categorizers.commons.TypeConversion;
-import br.com.douglas444.pcf.categorizers.estimators.NextNeighbour;
+import br.com.douglas444.pcf.categorizers.commons.Util;
+import br.com.douglas444.pcf.categorizers.classifier.NextNeighbour;
 import br.com.douglas444.streams.datastructures.Sample;
 import br.ufu.facom.pcf.core.*;
 
@@ -43,9 +44,9 @@ public class NNAverageRisk implements HighLevelCategorizer, Configurable {
         }
     }
 
-    public double getValue(final List<Sample> targetSamples,
-                           final List<ClusterSummary> clusterSummaries,
-                           final Set<Integer> knownLabels) {
+    private double getValue(final List<Sample> targetSamples,
+                            final List<ClusterSummary> clusterSummaries,
+                            final Set<Integer> knownLabels) {
 
         if (targetSamples.isEmpty()) {
             throw new IllegalStateException("List targetSamples cannot be empty");
@@ -64,7 +65,7 @@ public class NNAverageRisk implements HighLevelCategorizer, Configurable {
 
         for (Sample sample : targetSamples) {
 
-            riskSum += NextNeighbour.estimateError(
+            riskSum += 1 - NextNeighbour.calculateProbability(
                     sample,
                     knownConceptsCentroids,
                     knownLabels,
@@ -72,7 +73,7 @@ public class NNAverageRisk implements HighLevelCategorizer, Configurable {
         }
 
 
-        return riskSum / (double) targetSamples.size();
+        return Util.calculateNormalizedError(knownLabels,riskSum / (double) targetSamples.size());
     }
 
     @Override

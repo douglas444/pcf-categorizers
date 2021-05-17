@@ -1,4 +1,4 @@
-package br.com.douglas444.pcf.categorizers.estimators;
+package br.com.douglas444.pcf.categorizers.classifier;
 
 import br.com.douglas444.pcf.categorizers.commons.TypeConversion;
 import br.com.douglas444.pcf.categorizers.commons.Util;
@@ -9,13 +9,13 @@ import java.util.*;
 
 public class SharedKernelNeighbours {
 
-    public static double estimateError(final ClusterSummary target,
-                                       final List<ClusterSummary> clusterSummaries,
-                                       final Set<Integer> knownLabels,
-                                       final double factor) {
+    public static double calculateProbability(final ClusterSummary target,
+                                              final List<ClusterSummary> clusterSummaries,
+                                              final Set<Integer> knownLabels,
+                                              final double factor) {
 
         if (clusterSummaries.isEmpty()) {
-            return 1;
+            return 0;
         }
 
         final List<ClusterSummary> closestClusterSummaries = new ArrayList<>();
@@ -45,7 +45,7 @@ public class SharedKernelNeighbours {
                 .orElse(0.0);
 
         if (closestClusterSummaries.size() == 1) {
-            return 1;
+            return 0;
         }
 
         final double d = closestClusterSummaries
@@ -60,7 +60,7 @@ public class SharedKernelNeighbours {
             probability = n / d;
         }
 
-        return Util.calculateNormalizedError(knownLabels, probability);
+        return probability;
     }
 
     private static double calculateSimilarity(final ClusterSummary summary1,

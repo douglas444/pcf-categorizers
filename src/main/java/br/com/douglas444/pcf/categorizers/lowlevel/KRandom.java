@@ -13,7 +13,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 
-public class KRandomCategorizer implements LowLevelCategorizer, Configurable {
+public class KRandom implements LowLevelCategorizer, Configurable {
 
     private static final String K = "K";
     private static final String SEED = "Seed";
@@ -23,7 +23,7 @@ public class KRandomCategorizer implements LowLevelCategorizer, Configurable {
     private final HashMap<String, String> nominalParameters;
     private final HashMap<String, Double> numericParameters;
 
-    public KRandomCategorizer() {
+    public KRandom() {
         this.nominalParameters = new HashMap<>();
         this.numericParameters = new HashMap<>();
         this.numericParameters.put(K, DEFAULT_K);
