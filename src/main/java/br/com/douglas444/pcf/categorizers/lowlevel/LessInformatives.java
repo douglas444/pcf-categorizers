@@ -15,7 +15,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class KKLessInformative implements LowLevelCategorizer, Configurable {
+public class LessInformatives implements LowLevelCategorizer, Configurable {
 
     private static final String K = "K";
     private static final String DIMENSIONALITY = "Dimensionality";
@@ -26,7 +26,7 @@ public class KKLessInformative implements LowLevelCategorizer, Configurable {
     private final HashMap<String, String> nominalParameters;
     private final HashMap<String, Double> numericParameters;
 
-    public KKLessInformative() {
+    public LessInformatives() {
         this.nominalParameters = new HashMap<>();
         this.numericParameters = new HashMap<>();
         this.numericParameters.put(K, DEFAULT_K);
