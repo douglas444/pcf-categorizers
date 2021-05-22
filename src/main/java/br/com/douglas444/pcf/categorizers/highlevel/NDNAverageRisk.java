@@ -15,7 +15,7 @@ public class NDNAverageRisk implements HighLevelCategorizer, Configurable {
     private static final String THRESHOLD = "Threshold";
     private static final String DIMENSIONALITY = "Dimensionality";
 
-    private static final double DEFAULT_THRESHOLD = 0.8;
+    private static final double DEFAULT_THRESHOLD = 0.9;
     private static final double DEFAULT_DIMENSIONALITY = 1;
 
     private final HashMap<String, String> nominalParameters;

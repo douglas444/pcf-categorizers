@@ -70,6 +70,10 @@ public class KKLessInformative implements LowLevelCategorizer, Configurable {
         selected.addAll(unlabeledSamples.subList(0, k));
         selected.addAll(unlabeledSamples.subList(unlabeledSamples.size() - k, unlabeledSamples.size()));
 
+        final int middle = unlabeledSamples.size() / 2;
+        selected.addAll(unlabeledSamples.subList(middle, middle + k));
+        selected.addAll(unlabeledSamples.subList(middle - k, middle));
+
         return Oracle.categoryOf(selected, preLabeledSamples, context.getKnownLabels());
 
     }

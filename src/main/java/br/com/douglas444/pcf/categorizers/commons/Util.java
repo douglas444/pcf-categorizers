@@ -1,6 +1,5 @@
 package br.com.douglas444.pcf.categorizers.commons;
 
-import java.util.Arrays;
 import java.util.Set;
 
 public class Util {
