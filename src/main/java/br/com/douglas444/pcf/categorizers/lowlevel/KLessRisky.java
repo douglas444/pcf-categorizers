@@ -15,7 +15,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class LessInformatives implements LowLevelCategorizer, Configurable {
+public class KLessRisky implements LowLevelCategorizer, Configurable {
 
     private static final String K = "K";
     private static final String DIMENSIONALITY = "Dimensionality";
@@ -26,7 +26,7 @@ public class LessInformatives implements LowLevelCategorizer, Configurable {
     private final HashMap<String, String> nominalParameters;
     private final HashMap<String, Double> numericParameters;
 
-    public LessInformatives() {
+    public KLessRisky() {
         this.nominalParameters = new HashMap<>();
         this.numericParameters = new HashMap<>();
         this.numericParameters.put(K, DEFAULT_K);
@@ -52,13 +52,9 @@ public class LessInformatives implements LowLevelCategorizer, Configurable {
                 context.getIsPreLabeled());
 
         final int k = this.getNumericParameters().get(K).intValue();
-        if (unlabeledSamples.size() < 2 * k) {
-            return Oracle.categoryOf(unlabeledSamples, preLabeledSamples, context.getKnownLabels());
-        }
-
         final Comparator<Sample> comparator;
 
-        comparator = Comparator.comparing(sample -> NextNeighbour.calculateProbability(
+        comparator = Comparator.comparing(sample -> 1 - NextNeighbour.calculateProbability(
             sample,
             centroids,
             context.getKnownLabels(),
@@ -66,14 +62,7 @@ public class LessInformatives implements LowLevelCategorizer, Configurable {
 
         unlabeledSamples.sort(comparator);
 
-        final List<Sample> selected = new ArrayList<>();
-        selected.addAll(unlabeledSamples.subList(0, k));
-        selected.addAll(unlabeledSamples.subList(unlabeledSamples.size() - k, unlabeledSamples.size()));
-
-        final int middle = unlabeledSamples.size() / 2;
-        selected.addAll(unlabeledSamples.subList(middle, middle + k));
-        selected.addAll(unlabeledSamples.subList(middle - k, middle));
-
+        final List<Sample> selected = new ArrayList<>(unlabeledSamples.subList(0, k));
         return Oracle.categoryOf(selected, preLabeledSamples, context.getKnownLabels());
 
     }
