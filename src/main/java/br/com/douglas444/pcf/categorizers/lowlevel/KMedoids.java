@@ -1,19 +1,13 @@
 package br.com.douglas444.pcf.categorizers.lowlevel;
 
-import br.com.douglas444.pcf.categorizers.commons.Oracle;
 import br.com.douglas444.pcf.categorizers.commons.TypeConversion;
 import br.com.douglas444.streams.datastructures.Sample;
-import br.ufu.facom.pcf.core.Category;
-import br.ufu.facom.pcf.core.Configurable;
-import br.ufu.facom.pcf.core.Context;
-import br.ufu.facom.pcf.core.LowLevelCategorizer;
+import br.ufu.facom.pcf.core.*;
 
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
-public class KMedoids implements LowLevelCategorizer, Configurable {
+public class KMedoids extends MajorityCategory implements Configurable {
 
     private static final String K = "K";
     private static final double DEFAULT_K = 1;
@@ -28,27 +22,26 @@ public class KMedoids implements LowLevelCategorizer, Configurable {
     }
 
     @Override
-    public Category categorize(Context context) {
+    List<Sample> select(Context context, List<Sample> preLabeledSamples, List<Sample> unlabeledSamples) {
 
         final Sample centroid = TypeConversion.toSample(context.getPatternClusterSummary());
 
-        final List<Sample> preLabeledSamples = TypeConversion.toPreLabeledSampleList(
-                context.getSamplesAttributes(),
-                context.getSamplesLabels(),
-                context.getIsPreLabeled());
-
-        final List<Sample> samples = TypeConversion.toNotPreLabeledSampleList(
-                context.getSamplesAttributes(),
-                context.getSamplesLabels(),
-                context.getIsPreLabeled());
-
-        final List<Sample> sortedSamples = samples
+        final List<Sample> sortedSamples = unlabeledSamples
                 .stream()
                 .sorted(Comparator.comparing(sample -> sample.distance(centroid)))
                 .collect(Collectors.toList());
 
-        final List<Sample> kMedoids = sortedSamples.subList(0, this.numericParameters.get(K).intValue());
-        return Oracle.categoryOf(kMedoids, preLabeledSamples, context.getKnownLabels());
+        final int k = this.getNumericParameters().get(K).intValue();
+        final List<Sample> selected = new ArrayList<>();
+        if (!sortedSamples.isEmpty()) {
+            if (sortedSamples.size() > k) {
+                selected.addAll(sortedSamples.subList(0, k));
+            } else {
+                selected.addAll(sortedSamples);
+            }
+        }
+
+        return selected;
 
     }
 

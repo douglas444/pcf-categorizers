@@ -6,6 +6,10 @@ public class Util {
 
     public static double calculateNormalizedError(final Set<Integer> knownLabels, final double risk) {
 
+        if (risk == 0) {
+            return 0;
+        }
+
         final double maxError = 1 - 1 / (double) knownLabels.size();
         final double normalizedError = risk / maxError;
 

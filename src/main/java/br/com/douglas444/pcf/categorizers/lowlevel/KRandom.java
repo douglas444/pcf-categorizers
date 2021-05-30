@@ -1,19 +1,14 @@
 package br.com.douglas444.pcf.categorizers.lowlevel;
 
-import br.com.douglas444.pcf.categorizers.commons.Oracle;
-import br.com.douglas444.pcf.categorizers.commons.TypeConversion;
 import br.com.douglas444.streams.datastructures.Sample;
-import br.ufu.facom.pcf.core.Category;
-import br.ufu.facom.pcf.core.Configurable;
-import br.ufu.facom.pcf.core.Context;
-import br.ufu.facom.pcf.core.LowLevelCategorizer;
+import br.ufu.facom.pcf.core.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 
-public class KRandom implements LowLevelCategorizer, Configurable {
+public class KRandom extends MajorityCategory implements Configurable {
 
     private static final String K = "K";
     private static final String SEED = "Seed";
@@ -31,30 +26,21 @@ public class KRandom implements LowLevelCategorizer, Configurable {
     }
 
     @Override
-    public Category categorize(Context context) {
+    List<Sample> select(Context context, List<Sample> preLabeledSamples, List<Sample> unlabeledSamples) {
 
+        final List<Sample> selected = new ArrayList<>();
         final Random random = new Random(this.numericParameters.get(SEED).intValue());
 
-        final List<Sample> preLabeledSamples = TypeConversion.toPreLabeledSampleList(
-                context.getSamplesAttributes(),
-                context.getSamplesLabels(),
-                context.getIsPreLabeled());
-
-        final List<Sample> candidates = TypeConversion.toNotPreLabeledSampleList(
-                context.getSamplesAttributes(),
-                context.getSamplesLabels(),
-                context.getIsPreLabeled());
-
-        final List<Sample> kSelected = new ArrayList<>();
-
-        for (int i = 0; i < this.numericParameters.get(K).intValue(); ++i) {
-            final Sample selected = candidates.remove(random.nextInt(candidates.size()));
-            kSelected.add(selected);
+        final int k = this.getNumericParameters().get(K).intValue();
+        if (unlabeledSamples.size() < k) {
+            selected.addAll(unlabeledSamples);
+        } else {
+            for (int i = 0; i < this.numericParameters.get(K).intValue(); ++i) {
+                selected.add(unlabeledSamples.remove(random.nextInt(unlabeledSamples.size())));
+            }
         }
 
-        return Oracle.categoryOf(kSelected, preLabeledSamples, context.getKnownLabels());
-
-
+        return selected;
     }
 
     @Override
