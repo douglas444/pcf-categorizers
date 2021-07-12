@@ -11,8 +11,12 @@ public class NextNeighbour {
                                               final Set<Integer> knownLabels,
                                               final int dimensionality) {
 
-        if (centroids.isEmpty()) {
+        if (centroids.isEmpty() || knownLabels.isEmpty()) {
             return 0;
+        }
+
+        if (centroids.size() == 1 || knownLabels.size() == 1) {
+            return 1;
         }
 
         final List<Sample> closestCentroids = new ArrayList<>();
@@ -36,10 +40,6 @@ public class NextNeighbour {
 
         if (Double.isInfinite(n)) {
             return 1;
-        }
-
-        if (closestCentroids.size() == 1) {
-            return 0;
         }
 
         final double d = closestCentroids

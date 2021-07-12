@@ -13,8 +13,12 @@ public class NextDenserNeighbour {
                                               final Set<Integer> knownLabels,
                                               final int dimensionality) {
 
-        if (clusterSummaries.isEmpty()) {
+        if (clusterSummaries.isEmpty() || knownLabels.isEmpty()) {
             return 0;
+        }
+
+        if (clusterSummaries.size() == 1 || knownLabels.size() == 1) {
+            return 1;
         }
 
         final List<ClusterSummary> closestClusterSummaries = new ArrayList<>();
@@ -45,10 +49,6 @@ public class NextDenserNeighbour {
 
         if (Double.isInfinite(n)) {
             return 1;
-        }
-
-        if (closestClusterSummaries.size() == 1) {
-            return 0;
         }
 
         final double d = closestClusterSummaries
