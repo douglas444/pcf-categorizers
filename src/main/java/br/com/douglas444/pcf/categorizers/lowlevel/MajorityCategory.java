@@ -5,6 +5,7 @@ import br.com.douglas444.pcf.categorizers.commons.TypeConversion;
 import br.com.douglas444.streams.datastructures.Sample;
 import br.ufu.facom.pcf.core.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public abstract class MajorityCategory implements LowLevelCategorizer {
@@ -22,7 +23,8 @@ public abstract class MajorityCategory implements LowLevelCategorizer {
                 context.getSamplesLabels(),
                 context.getIsPreLabeled());
 
-        final List<Sample> selected = select(context, preLabeledSamples, unlabeledSamples);
+        final List<Sample> selected = unlabeledSamples.isEmpty() ? new ArrayList<>() :
+                select(context, preLabeledSamples, unlabeledSamples);
 
         final Category category = Oracle.categoryOf(selected, preLabeledSamples, context.getKnownLabels());
         return TypeConversion.toResponseContext(selected, preLabeledSamples, category);
