@@ -54,6 +54,7 @@ public class KSeeds extends MajorityCategory implements Configurable {
 
     }
 
+    //TODO Use streams' lib implementation
     private static Sample selectNextCentroid(final List<Sample> samples,
                                              final List<Sample> centroids,
                                              final Random random) {
@@ -82,6 +83,7 @@ public class KSeeds extends MajorityCategory implements Configurable {
 
     }
 
+    //TODO Use streams' lib implementation
     private static HashMap<Sample, Double> mapProbabilityBySample(final List<Sample> samples,
                                                                   final List<Sample> centroids) {
 
